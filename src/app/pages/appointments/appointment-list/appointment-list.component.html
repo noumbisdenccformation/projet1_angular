@@ -1,0 +1,200 @@
+<div class="appointment-list-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1>Gestion des Rendez-vous</h1>
+    <button mat-raised-button color="primary" routerLink="/appointments/new">
+      <mat-icon>add</mat-icon>
+      Nouveau Rendez-vous
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>Filtres</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filters-form">
+        <div class="filters-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Rechercher</mat-label>
+            <input matInput formControlName="search" placeholder="Patient, médecin, salle...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Statut</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="">Tous</mat-option>
+              <mat-option *ngFor="let status of statusOptions" [value]="status">
+                {{ getStatusDisplayName(status) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="">Tous</mat-option>
+              <mat-option *ngFor="let type of typeOptions" [value]="type">
+                {{ getTypeDisplayName(type) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filters-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Date de début</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="dateFrom">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de fin</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="dateTo">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+
+          <button mat-button type="button" (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Effacer les filtres
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tableau des rendez-vous -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="filteredAppointments" matSort (matSortChange)="onSortChange($event)">
+          
+          <!-- Colonne Date -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              {{ appointment.date | date:'dd/MM/yyyy' }} 
+            </td>
+          </ng-container>
+
+          <!-- Colonne Heure -->
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Heure </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              {{ appointment.startTime }} - {{ appointment.endTime }}
+            </td>
+          </ng-container>
+
+          <!-- Colonne Patient -->
+          <ng-container matColumnDef="patientName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Patient </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              {{ appointment.patientName }}
+            </td>
+          </ng-container>
+
+          <!-- Colonne Médecin -->
+          <ng-container matColumnDef="doctorName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Médecin </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              {{ appointment.doctorName }}
+            </td>
+          </ng-container>
+
+          <!-- Colonne Type -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              <mat-chip [color]="'primary'" selected>
+                {{ getTypeDisplayName(appointment.type) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Colonne Statut -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Statut </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              <mat-chip [color]="getStatusColor(appointment.status)" selected>
+                {{ getStatusDisplayName(appointment.status) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Colonne Salle -->
+          <ng-container matColumnDef="room">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Salle </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              {{ appointment.room }}
+            </td>
+          </ng-container>
+
+          <!-- Colonne Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let appointment"> 
+              <div class="actions-buttons">
+                <button mat-icon-button [matMenuTriggerFor]="statusMenu" 
+                        [disabled]="!canEdit(appointment)" matTooltip="Changer le statut">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #statusMenu="matMenu">
+                  <button mat-menu-item *ngFor="let status of statusOptions" 
+                          (click)="updateStatus(appointment.id, status)"
+                          [disabled]="status === appointment.status">
+                    <mat-icon>check_circle</mat-icon>
+                    {{ getStatusDisplayName(status) }}
+                  </button>
+                </mat-menu>
+
+                <button mat-icon-button [routerLink]="['/appointments', appointment.id]" 
+                        matTooltip="Voir détails">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+
+                <button mat-icon-button [routerLink]="['/appointments', appointment.id, 'edit']" 
+                        [disabled]="!canEdit(appointment)" matTooltip="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button (click)="deleteAppointment(appointment.id)" 
+                        [disabled]="!canDelete(appointment)" matTooltip="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Message si aucun rendez-vous -->
+        <div *ngIf="filteredAppointments.length === 0 && !loading" class="no-data">
+          <mat-icon>event_busy</mat-icon>
+          <p>Aucun rendez-vous trouvé</p>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="loading" class="loading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Chargement des rendez-vous...</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <mat-paginator 
+        [length]="totalItems"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="currentPage"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

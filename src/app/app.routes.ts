@@ -6,6 +6,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { PatientListComponent } from './pages/patients/patient-list/patient-list.component';
 import { PatientFormComponent } from './pages/patients/patient-form/patient-form.component';
+import { AppointmentListComponent } from './pages/appointments/appointment-list/appointment-list.component';
+import { AppointmentFormComponent } from './pages/appointments/appointment-form/appointment-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -44,39 +46,31 @@ export const routes: Routes = [
     ]
   },
   
-  // Routes pour les rendez-vous (à implémenter)
-  /*
+  // Routes pour les rendez-vous
   {
     path: 'appointments',
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        component: () => import('./pages/appointments/appointment-list/appointment-list.component').then(m => m.AppointmentListComponent),
+        component: AppointmentListComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY] }
       },
       {
         path: 'new',
-        component: () => import('./pages/appointments/appointment-form/appointment-form.component').then(m => m.AppointmentFormComponent),
+        component: AppointmentFormComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
       },
       {
-        path: ':id',
-        component: () => import('./pages/appointments/appointment-detail/appointment-detail.component').then(m => m.AppointmentDetailComponent),
-        canActivate: [roleGuard],
-        data: { roles: [UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY] }
-      },
-      {
         path: ':id/edit',
-        component: () => import('./pages/appointments/appointment-form/appointment-form.component').then(m => m.AppointmentFormComponent),
+        component: AppointmentFormComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
       }
     ]
   },
-  */
   
   // Routes pour le calendrier (à implémenter)
   /*

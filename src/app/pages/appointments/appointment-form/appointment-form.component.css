@@ -1,0 +1,143 @@
+.appointment-form-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* En-tête */
+.header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Carte du formulaire */
+.form-card {
+  margin-bottom: 24px;
+}
+
+.appointment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Lignes du formulaire */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* Champs de formulaire */
+mat-form-field {
+  width: 100%;
+}
+
+/* Zone de notes */
+mat-form-field:has(textarea) {
+  grid-column: 1 / -1;
+}
+
+/* Message de conflit */
+.conflict-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  color: #856404;
+  font-size: 0.9rem;
+}
+
+.conflict-warning mat-icon {
+  color: #f39c12;
+}
+
+/* Actions du formulaire */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.form-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  height: auto;
+  min-width: 120px;
+}
+
+/* Overlay de chargement */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-overlay p {
+  margin-top: 16px;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .appointment-form-container {
+    padding: 16px;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .form-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .appointment-form {
+    gap: 20px;
+  }
+  
+  .form-row {
+    gap: 12px;
+  }
+}
