@@ -1,31 +1,39 @@
-<div class="login-container">
-  <div class="login-card">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title class="login-title">
-          <mat-icon class="title-icon">local_hospital</mat-icon>
-          Clinique Médicale
-        </mat-card-title>
-        <mat-card-subtitle>Connexion à votre espace</mat-card-subtitle>
+<div class="min-h-screen clinic-gradient flex items-center justify-center p-4">
+  <div class="w-full max-w-md fade-in">
+    <mat-card class="clinic-card border-0 shadow-clinic-lg">
+      <mat-card-header class="text-center pb-4">
+        <div class="flex flex-col items-center space-y-2">
+          <div class="bg-white p-3 rounded-full shadow-md">
+            <mat-icon class="text-4xl text-clinic-primary">local_hospital</mat-icon>
+          </div>
+          <mat-card-title class="text-2xl font-bold text-gray-800">
+            Clinique Médicale
+          </mat-card-title>
+          <mat-card-subtitle class="text-gray-600">
+            Connexion à votre espace professionnel
+          </mat-card-subtitle>
+        </div>
       </mat-card-header>
 
-      <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-          <mat-form-field appearance="outline" class="full-width">
+      <mat-card-content class="pt-4">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Nom d'utilisateur</mat-label>
-            <input matInput formControlName="username" placeholder="Entrez votre nom d'utilisateur">
+            <input matInput formControlName="username" placeholder="Entrez votre nom d'utilisateur" class="text-gray-700">
+            <mat-icon matPrefix class="text-gray-400 mr-2">person</mat-icon>
             <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
               {{ getErrorMessage('username') }}
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Mot de passe</mat-label>
             <input matInput [type]="hidePassword ? 'password' : 'text'" 
-                   formControlName="password" placeholder="Entrez votre mot de passe">
+                   formControlName="password" placeholder="Entrez votre mot de passe" class="text-gray-700">
+            <mat-icon matPrefix class="text-gray-400 mr-2">lock</mat-icon>
             <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" 
-                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
-              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
+              <mat-icon class="text-gray-400">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
             <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
               {{ getErrorMessage('password') }}
@@ -36,28 +44,43 @@
           </mat-form-field>
 
           <button mat-raised-button color="primary" type="submit" 
-                  class="login-button full-width" 
+                  class="w-full h-12 text-lg font-medium clinic-button-primary" 
                   [disabled]="loginForm.invalid || isLoading">
-            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-            <span *ngIf="!isLoading">Se connecter</span>
+            <div class="flex items-center justify-center space-x-2">
+              <mat-spinner diameter="20" *ngIf="isLoading" class="mr-2"></mat-spinner>
+              <span *ngIf="!isLoading">Se connecter</span>
+              <span *ngIf="isLoading">Connexion...</span>
+            </div>
           </button>
         </form>
 
         <!-- Boutons de test rapide -->
-        <div class="test-buttons">
-          <p class="test-label">Tests rapides :</p>
-          <div class="test-buttons-row">
-            <button mat-stroked-button color="primary" (click)="loginAsAdmin()" 
-                    [disabled]="isLoading" class="test-button">
-              Admin
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <p class="text-sm text-gray-600 text-center mb-4 font-medium">Tests rapides :</p>
+          <div class="grid grid-cols-3 gap-2">
+            <button mat-stroked-button (click)="loginAsAdmin()" 
+                    [disabled]="isLoading" 
+                    class="text-xs py-2 border-blue-300 text-blue-600 hover:bg-blue-50">
+              <div class="flex flex-col items-center">
+                <mat-icon class="text-sm mb-1">admin_panel_settings</mat-icon>
+                <span>Admin</span>
+              </div>
             </button>
-            <button mat-stroked-button color="accent" (click)="loginAsDoctor()" 
-                    [disabled]="isLoading" class="test-button">
-              Médecin
+            <button mat-stroked-button (click)="loginAsDoctor()" 
+                    [disabled]="isLoading" 
+                    class="text-xs py-2 border-green-300 text-green-600 hover:bg-green-50">
+              <div class="flex flex-col items-center">
+                <mat-icon class="text-sm mb-1">medical_services</mat-icon>
+                <span>Médecin</span>
+              </div>
             </button>
-            <button mat-stroked-button color="warn" (click)="loginAsSecretary()" 
-                    [disabled]="isLoading" class="test-button">
-              Secrétaire
+            <button mat-stroked-button (click)="loginAsSecretary()" 
+                    [disabled]="isLoading" 
+                    class="text-xs py-2 border-purple-300 text-purple-600 hover:bg-purple-50">
+              <div class="flex flex-col items-center">
+                <mat-icon class="text-sm mb-1">support_agent</mat-icon>
+                <span>Secrétaire</span>
+              </div>
             </button>
           </div>
         </div>

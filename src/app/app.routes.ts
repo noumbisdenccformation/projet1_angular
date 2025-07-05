@@ -11,6 +11,9 @@ import { AppointmentFormComponent } from './pages/appointments/appointment-form/
 import { CalendarComponent } from './pages/calendar/calendar/calendar.component';
 import { PrescriptionListComponent } from './pages/prescriptions/prescription-list/prescription-list.component';
 import { PrescriptionFormComponent } from './pages/prescriptions/prescription-form/prescription-form.component';
+import { InvoiceListComponent } from './pages/invoices/invoice-list/invoice-list.component';
+import { InvoiceFormComponent } from './pages/invoices/invoice-form/invoice-form.component';
+import { InvoiceDetailComponent } from './pages/invoices/invoice-detail/invoice-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -109,42 +112,44 @@ export const routes: Routes = [
     ]
   },
   
-  // Routes pour les factures (à implémenter)
-  /*
+  // Routes pour les factures
   {
     path: 'invoices',
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        component: () => import('./pages/invoices/invoice-list/invoice-list.component').then(m => m.InvoiceListComponent),
+        component: InvoiceListComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
       },
       {
         path: 'new',
-        component: () => import('./pages/invoices/invoice-form/invoice-form.component').then(m => m.InvoiceFormComponent),
+        component: InvoiceFormComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
+      },
+      {
+        path: ':id/edit',
+        component: InvoiceFormComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
       },
       {
         path: ':id',
-        component: () => import('./pages/invoices/invoice-detail/invoice-detail.component').then(m => m.InvoiceDetailComponent),
+        component: InvoiceDetailComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SECRETARY] }
       }
     ]
   },
-  */
   
-  // Routes pour le chat (à implémenter)
-  /*
+  // Routes pour le chat
   {
     path: 'chat',
-    component: () => import('./pages/chat/chat.component').then(m => m.ChatComponent),
+    loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent),
     canActivate: [authGuard]
   },
-  */
   
   // Routes pour l'administration (à implémenter)
   /*

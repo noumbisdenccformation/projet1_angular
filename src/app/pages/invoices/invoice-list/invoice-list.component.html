@@ -1,1 +1,192 @@
-<p>invoice-list works!</p>
+<div class="invoice-list-container">
+  <div class="list-header">
+    <div class="header-left">
+      <h1>Gestion des factures</h1>
+      <p>Gérez toutes les factures de la clinique</p>
+    </div>
+    <div class="header-right">
+      <a routerLink="/invoices/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Nouvelle facture
+      </a>
+    </div>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearch()"
+        placeholder="Rechercher par numéro, patient..."
+        class="search-input">
+      <i class="fas fa-search search-icon"></i>
+    </div>
+
+    <div class="filter-controls">
+      <select [(ngModel)]="statusFilter" (change)="onFilter()" class="filter-select">
+        <option value="">Tous les statuts</option>
+        <option value="DRAFT">Brouillon</option>
+        <option value="SENT">Envoyée</option>
+        <option value="PAID">Payée</option>
+        <option value="OVERDUE">En retard</option>
+        <option value="CANCELLED">Annulée</option>
+      </select>
+
+      <select [(ngModel)]="sortBy" (change)="onSort()" class="filter-select">
+        <option value="createdAt">Date de création</option>
+        <option value="dueDate">Date d'échéance</option>
+        <option value="total">Montant</option>
+        <option value="status">Statut</option>
+      </select>
+
+      <button (click)="toggleSortOrder()" class="btn btn-outline">
+        <i class="fas" [class.fa-sort-up]="sortOrder === 'asc'" [class.fa-sort-down]="sortOrder === 'desc'"></i>
+        {{ sortOrder === 'asc' ? 'Croissant' : 'Décroissant' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-section">
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="fas fa-file-invoice"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ totalInvoices }}</h3>
+        <p>Total factures</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon paid">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ paidInvoices }}</h3>
+        <p>Payées</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon pending">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ pendingInvoices }}</h3>
+        <p>En attente</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon overdue">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ overdueInvoices }}</h3>
+        <p>En retard</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des factures -->
+  <div class="invoices-table">
+    <div class="table-header">
+      <div class="col invoice-number">Numéro</div>
+      <div class="col patient">Patient</div>
+      <div class="col amount">Montant</div>
+      <div class="col status">Statut</div>
+      <div class="col dates">Dates</div>
+      <div class="col actions">Actions</div>
+    </div>
+
+    <div *ngIf="loading" class="loading-row">
+      <div class="spinner"></div>
+      <span>Chargement des factures...</span>
+    </div>
+
+    <div *ngIf="!loading && filteredInvoices.length === 0" class="empty-state">
+      <i class="fas fa-file-invoice"></i>
+      <h3>Aucune facture trouvée</h3>
+      <p>Commencez par créer votre première facture</p>
+      <a routerLink="/invoices/new" class="btn btn-primary">
+        Créer une facture
+      </a>
+    </div>
+
+    <div class="table-row" *ngFor="let invoice of paginatedInvoices">
+      <div class="col invoice-number">
+        <strong>{{ invoice.invoiceNumber }}</strong>
+      </div>
+      <div class="col patient">
+        {{ invoice.patientName }}
+      </div>
+      <div class="col amount">
+        <strong>{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="col status">
+        <span class="status-badge" [class]="getStatusClass(invoice.status)">
+          {{ getStatusText(invoice.status) }}
+        </span>
+      </div>
+      <div class="col dates">
+        <div class="date-info">
+          <small>Créée: {{ formatDate(invoice.createdAt) }}</small>
+          <small>Échéance: {{ formatDate(invoice.dueDate) }}</small>
+        </div>
+      </div>
+      <div class="col actions">
+        <div class="action-buttons">
+          <button (click)="viewInvoice(invoice.id)" class="btn btn-sm btn-info" title="Voir">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button (click)="editInvoice(invoice.id)" class="btn btn-sm btn-primary" title="Modifier">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button (click)="downloadPDF(invoice.id)" class="btn btn-sm btn-secondary" title="Télécharger PDF">
+            <i class="fas fa-download"></i>
+          </button>
+          <button (click)="sendEmail(invoice.id)" class="btn btn-sm btn-success" title="Envoyer par email">
+            <i class="fas fa-envelope"></i>
+          </button>
+          <button (click)="deleteInvoice(invoice.id)" class="btn btn-sm btn-danger" title="Supprimer">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredInvoices.length > 0">
+    <div class="pagination-info">
+      Affichage {{ startIndex + 1 }}-{{ endIndex }} sur {{ filteredInvoices.length }} factures
+    </div>
+    <div class="pagination-controls">
+      <button 
+        (click)="previousPage()" 
+        [disabled]="currentPage === 1"
+        class="btn btn-outline">
+        <i class="fas fa-chevron-left"></i>
+        Précédent
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of visiblePages" 
+          (click)="goToPage(page)"
+          [class.active]="page === currentPage"
+          class="btn btn-page">
+          {{ page }}
+        </button>
+      </div>
+      
+      <button 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages"
+        class="btn btn-outline">
+        Suivant
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

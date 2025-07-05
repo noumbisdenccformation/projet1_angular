@@ -266,9 +266,11 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
 
       if (control instanceof FormArray) {
         control.controls.forEach(group => {
-          Object.keys(group.controls).forEach(subKey => {
-            group.get(subKey)?.markAsTouched();
-          });
+          if (group instanceof FormGroup) {
+            Object.keys(group.controls).forEach(subKey => {
+              group.get(subKey)?.markAsTouched();
+            });
+          }
         });
       }
     });

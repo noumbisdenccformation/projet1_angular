@@ -1,0 +1,221 @@
+<div class="invoice-form-container">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'Modifier la facture' : 'Nouvelle facture' }}</h2>
+    <a routerLink="/invoices" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="invoice-form">
+    <!-- Informations générales -->
+    <div class="form-section">
+      <h3>Informations générales</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="patientId">Patient *</label>
+          <select 
+            id="patientId" 
+            formControlName="patientId" 
+            [class.invalid]="isFieldInvalid('patientId')"
+            class="form-control">
+            <option value="">Sélectionner un patient</option>
+            <option *ngFor="let patient of patients" [value]="patient.id">
+              {{ patient.firstName }} {{ patient.lastName }} - {{ patient.phone }}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('patientId')" class="error-message">
+            Le patient est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="invoiceNumber">Numéro de facture *</label>
+          <input 
+            type="text" 
+            id="invoiceNumber" 
+            formControlName="invoiceNumber" 
+            [class.invalid]="isFieldInvalid('invoiceNumber')"
+            class="form-control"
+            placeholder="FAC-2024-001">
+          <div *ngIf="isFieldInvalid('invoiceNumber')" class="error-message">
+            Le numéro de facture est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="issueDate">Date d'émission *</label>
+          <input 
+            type="date" 
+            id="issueDate" 
+            formControlName="issueDate" 
+            [class.invalid]="isFieldInvalid('issueDate')"
+            class="form-control">
+          <div *ngIf="isFieldInvalid('issueDate')" class="error-message">
+            La date d'émission est requise
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dueDate">Date d'échéance *</label>
+          <input 
+            type="date" 
+            id="dueDate" 
+            formControlName="dueDate" 
+            [class.invalid]="isFieldInvalid('dueDate')"
+            class="form-control">
+          <div *ngIf="isFieldInvalid('dueDate')" class="error-message">
+            La date d'échéance est requise
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Statut *</label>
+          <select 
+            id="status" 
+            formControlName="status" 
+            [class.invalid]="isFieldInvalid('status')"
+            class="form-control">
+            <option value="DRAFT">Brouillon</option>
+            <option value="SENT">Envoyée</option>
+            <option value="PAID">Payée</option>
+            <option value="OVERDUE">En retard</option>
+            <option value="CANCELLED">Annulée</option>
+          </select>
+          <div *ngIf="isFieldInvalid('status')" class="error-message">
+            Le statut est requis
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea 
+          id="notes" 
+          formControlName="notes" 
+          class="form-control"
+          rows="3"
+          placeholder="Notes additionnelles..."></textarea>
+      </div>
+    </div>
+
+    <!-- Lignes de facture -->
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Lignes de facture</h3>
+        <button type="button" (click)="addInvoiceLine()" class="btn btn-primary btn-sm">
+          <i class="fas fa-plus"></i> Ajouter une ligne
+        </button>
+      </div>
+
+      <div class="invoice-lines">
+        <div class="lines-header">
+          <div class="line-col description">Description</div>
+          <div class="line-col quantity">Quantité</div>
+          <div class="line-col price">Prix unitaire</div>
+          <div class="line-col total">Total</div>
+          <div class="line-col actions">Actions</div>
+        </div>
+
+        <div 
+          formArrayName="lines" 
+          class="line-item" 
+          *ngFor="let line of invoiceLines.controls; let i = index">
+          <div [formGroupName]="i" class="line-content">
+            <div class="line-col description">
+              <input 
+                type="text" 
+                formControlName="description" 
+                [class.invalid]="isLineFieldInvalid(i, 'description')"
+                class="form-control"
+                placeholder="Description du service">
+              <div *ngIf="isLineFieldInvalid(i, 'description')" class="error-message">
+                Description requise
+              </div>
+            </div>
+
+            <div class="line-col quantity">
+              <input 
+                type="number" 
+                formControlName="quantity" 
+                [class.invalid]="isLineFieldInvalid(i, 'quantity')"
+                class="form-control"
+                min="1"
+                (input)="calculateLineTotal(i)"
+                placeholder="1">
+              <div *ngIf="isLineFieldInvalid(i, 'quantity')" class="error-message">
+                Quantité invalide
+              </div>
+            </div>
+
+            <div class="line-col price">
+              <input 
+                type="number" 
+                formControlName="unitPrice" 
+                [class.invalid]="isLineFieldInvalid(i, 'unitPrice')"
+                class="form-control"
+                min="0"
+                step="0.01"
+                (input)="calculateLineTotal(i)"
+                placeholder="0.00">
+              <div *ngIf="isLineFieldInvalid(i, 'unitPrice')" class="error-message">
+                Prix invalide
+              </div>
+            </div>
+
+            <div class="line-col total">
+              <input 
+                type="number" 
+                formControlName="total" 
+                class="form-control"
+                readonly>
+            </div>
+
+            <div class="line-col actions">
+              <button 
+                type="button" 
+                (click)="removeInvoiceLine(i)" 
+                class="btn btn-danger btn-sm"
+                [disabled]="invoiceLines.length === 1">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total de la facture -->
+      <div class="invoice-total">
+        <div class="total-row">
+          <span class="total-label">Total de la facture:</span>
+          <span class="total-amount">{{ calculateInvoiceTotal() | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        routerLink="/invoices" 
+        class="btn btn-secondary">
+        Annuler
+      </button>
+      <button 
+        type="submit" 
+        [disabled]="loading || invoiceForm.invalid"
+        class="btn btn-primary">
+        <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }} la facture
+      </button>
+    </div>
+  </form>
+</div>

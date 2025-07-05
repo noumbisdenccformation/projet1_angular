@@ -1,1 +1,176 @@
-/* You can add global styles to this file, and also import other style files */
+/* Reset et styles globaux */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f9fafb;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Correction des conflits Angular Material */
+.mat-mdc-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+}
+
+.mat-mdc-button {
+  font-weight: 500 !important;
+}
+
+.mat-toolbar {
+  z-index: 1000 !important;
+}
+
+.mat-menu-panel {
+  z-index: 1001 !important;
+}
+
+/* Espacement des éléments */
+.mat-mdc-form-field {
+  margin-bottom: 16px !important;
+}
+
+.mat-mdc-card-content {
+  padding: 16px !important;
+}
+
+/* Correction des overlaps */
+.mat-mdc-card-header {
+  padding-bottom: 16px !important;
+}
+
+.mat-mdc-card-title {
+  margin-bottom: 8px !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
+.mat-mdc-card-subtitle {
+  margin-bottom: 0 !important;
+  color: #6b7280 !important;
+}
+
+/* Styles personnalisés */
+.clinic-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.clinic-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  transition: box-shadow 0.3s ease;
+}
+
+.clinic-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.clinic-button-primary {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clinic-button-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.clinic-button-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clinic-button-secondary:hover {
+  background-color: #d1d5db;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Utilitaires avec !important pour forcer */
+.text-center { text-align: center !important; }
+.flex { display: flex !important; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.space-x-2 > * + * { margin-left: 8px !important; }
+.space-x-3 > * + * { margin-left: 12px !important; }
+.space-y-4 > * + * { margin-top: 16px !important; }
+.w-full { width: 100% !important; }
+.min-h-screen { min-height: 100vh !important; }
+.p-4 { padding: 16px !important; }
+.p-6 { padding: 24px !important; }
+.mb-4 { margin-bottom: 16px !important; }
+.mb-6 { margin-bottom: 24px !important; }
+.text-sm { font-size: 0.875rem !important; }
+.text-lg { font-size: 1.125rem !important; }
+.text-xl { font-size: 1.25rem !important; }
+.text-2xl { font-size: 1.5rem !important; }
+.text-3xl { font-size: 1.875rem !important; }
+.font-medium { font-weight: 500 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-bold { font-weight: 700 !important; }
+.text-gray-500 { color: #6b7280 !important; }
+.text-gray-600 { color: #4b5563 !important; }
+.text-gray-700 { color: #374151 !important; }
+.text-gray-800 { color: #1f2937 !important; }
+.text-gray-900 { color: #111827 !important; }
+.text-white { color: white !important; }
+.bg-white { background-color: white !important; }
+.bg-gray-50 { background-color: #f9fafb !important; }
+.rounded-lg { border-radius: 8px !important; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+
+/* Correction des z-index */
+.navbar { z-index: 100 !important; }
+.sidebar { z-index: 90 !important; }
+.modal { z-index: 200 !important; }
+
+/* Espacement des grilles */
+.grid { display: grid !important; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.gap-4 { gap: 16px !important; }
+.gap-6 { gap: 24px !important; }
+
+/* Responsive */
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:items-center { align-items: center !important; }
+  .md\:justify-between { justify-content: space-between !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .lg\:flex { display: flex !important; }
+}

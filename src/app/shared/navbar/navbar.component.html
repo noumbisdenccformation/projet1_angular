@@ -1,93 +1,151 @@
-<mat-toolbar color="primary" class="navbar">
-  <div class="navbar-brand">
-    <mat-icon class="brand-icon">local_hospital</mat-icon>
-    <span class="brand-text">Clinique Médicale</span>
-  </div>
-
-  <div class="navbar-menu" *ngIf="currentUser">
-    <!-- Dashboard -->
-    <button mat-button routerLink="/dashboard" routerLinkActive="active">
-      <mat-icon>dashboard</mat-icon>
-      Tableau de bord
-    </button>
-
-    <!-- Patients -->
-    <button mat-button routerLink="/patients" routerLinkActive="active" 
-            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
-      <mat-icon>people</mat-icon>
-      Patients
-    </button>
-
-    <!-- Rendez-vous -->
-    <button mat-button routerLink="/appointments" routerLinkActive="active"
-            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
-      <mat-icon>event</mat-icon>
-      Rendez-vous
-    </button>
-
-    <!-- Calendrier -->
-    <button mat-button routerLink="/calendar" routerLinkActive="active"
-            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
-      <mat-icon>calendar_today</mat-icon>
-      Calendrier
-    </button>
-
-    <!-- Prescriptions -->
-    <button mat-button routerLink="/prescriptions" routerLinkActive="active"
-            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR])">
-      <mat-icon>medication</mat-icon>
-      Prescriptions
-    </button>
-
-    <!-- Factures -->
-    <button mat-button routerLink="/invoices" routerLinkActive="active"
-            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
-      <mat-icon>receipt</mat-icon>
-      Factures
-    </button>
-
-    <!-- Chat -->
-    <button mat-button routerLink="/chat" routerLinkActive="active">
-      <mat-icon matBadge="3" matBadgeColor="warn">chat</mat-icon>
-      Messages
-    </button>
-
-    <!-- Administration -->
-    <button mat-button [matMenuTriggerFor]="adminMenu" 
-            *ngIf="authService.isAdmin()">
-      <mat-icon>admin_panel_settings</mat-icon>
-      Administration
-    </button>
-
-    <mat-menu #adminMenu="matMenu">
-      <button mat-menu-item routerLink="/admin/users">
-        <mat-icon>manage_accounts</mat-icon>
-        Gestion des utilisateurs
-      </button>
-      <button mat-menu-item routerLink="/admin/statistics">
-        <mat-icon>analytics</mat-icon>
-        Statistiques
-      </button>
-    </mat-menu>
-  </div>
-
-  <div class="navbar-user">
-    <button mat-button [matMenuTriggerFor]="userMenu" *ngIf="currentUser">
-      <mat-icon>account_circle</mat-icon>
-      {{ getDisplayName() }}
-      <mat-icon>arrow_drop_down</mat-icon>
-    </button>
-
-    <mat-menu #userMenu="matMenu">
-      <div class="user-info" mat-menu-item disabled>
-        <mat-icon>person</mat-icon>
-        <span>{{ getDisplayName() }}</span>
-        <small>{{ getRoleDisplayName(currentUser!.role) }}</small>
+<mat-toolbar class="bg-white shadow-md border-b border-gray-200 px-4">
+  <div class="flex items-center justify-between w-full">
+    <!-- Brand -->
+    <div class="flex items-center space-x-3">
+      <div class="bg-clinic-primary p-2 rounded-lg">
+        <mat-icon class="text-white text-2xl">local_hospital</mat-icon>
       </div>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        Déconnexion
+      <div class="hidden md:block">
+        <h1 class="text-xl font-bold text-gray-800">Clinique Médicale</h1>
+        <p class="text-xs text-gray-500">Système de gestion</p>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="hidden lg:flex items-center space-x-1" *ngIf="currentUser">
+      <button mat-button routerLink="/dashboard" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors">
+        <mat-icon class="text-lg">dashboard</mat-icon>
+        <span class="font-medium">Tableau de bord</span>
+      </button>
+
+      <button mat-button routerLink="/patients" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon class="text-lg">people</mat-icon>
+        <span class="font-medium">Patients</span>
+      </button>
+
+      <button mat-button routerLink="/appointments" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon class="text-lg">event</mat-icon>
+        <span class="font-medium">Rendez-vous</span>
+      </button>
+
+      <button mat-button routerLink="/calendar" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon class="text-lg">calendar_today</mat-icon>
+        <span class="font-medium">Calendrier</span>
+      </button>
+
+      <button mat-button routerLink="/prescriptions" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR])">
+        <mat-icon class="text-lg">medication</mat-icon>
+        <span class="font-medium">Prescriptions</span>
+      </button>
+
+      <button mat-button routerLink="/invoices" routerLinkActive="bg-blue-50 text-blue-600" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+        <mat-icon class="text-lg">receipt</mat-icon>
+        <span class="font-medium">Factures</span>
+      </button>
+
+      <button mat-button [matMenuTriggerFor]="adminMenu" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              *ngIf="authService.isAdmin()">
+        <mat-icon class="text-lg">admin_panel_settings</mat-icon>
+        <span class="font-medium">Admin</span>
+      </button>
+
+      <mat-menu #adminMenu="matMenu" class="mt-2">
+        <button mat-menu-item routerLink="/admin/users" class="flex items-center space-x-3 px-4 py-3">
+          <mat-icon class="text-gray-600">manage_accounts</mat-icon>
+          <span>Gestion des utilisateurs</span>
+        </button>
+        <button mat-menu-item routerLink="/admin/statistics" class="flex items-center space-x-3 px-4 py-3">
+          <mat-icon class="text-gray-600">analytics</mat-icon>
+          <span>Statistiques</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <!-- User Menu -->
+    <div class="flex items-center space-x-3" *ngIf="currentUser">
+      <!-- Notifications -->
+      <button mat-icon-button class="relative">
+        <mat-icon matBadge="3" matBadgeColor="warn" class="text-gray-600">notifications</mat-icon>
+      </button>
+
+      <!-- Messages -->
+      <button mat-icon-button class="relative">
+        <mat-icon matBadge="2" matBadgeColor="accent" class="text-gray-600">chat</mat-icon>
+      </button>
+
+      <!-- User Profile -->
+      <button mat-button [matMenuTriggerFor]="userMenu" 
+              class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors">
+        <div class="w-8 h-8 bg-clinic-primary rounded-full flex items-center justify-center">
+          <span class="text-white text-sm font-medium">{{ getUserInitials() }}</span>
+        </div>
+        <div class="hidden md:block text-left">
+          <p class="text-sm font-medium text-gray-800">{{ getDisplayName() }}</p>
+          <p class="text-xs text-gray-500">{{ getRoleDisplayName(currentUser!.role) }}</p>
+        </div>
+        <mat-icon class="text-gray-400">arrow_drop_down</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu" class="mt-2">
+        <div class="px-4 py-3 border-b border-gray-100">
+          <p class="text-sm font-medium text-gray-800">{{ getDisplayName() }}</p>
+          <p class="text-xs text-gray-500">{{ currentUser!.email }}</p>
+          <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+            {{ getRoleDisplayName(currentUser!.role) }}
+          </span>
+        </div>
+        <button mat-menu-item class="flex items-center space-x-3 px-4 py-3">
+          <mat-icon class="text-gray-600">person</mat-icon>
+          <span>Mon profil</span>
+        </button>
+        <button mat-menu-item class="flex items-center space-x-3 px-4 py-3">
+          <mat-icon class="text-gray-600">settings</mat-icon>
+          <span>Paramètres</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()" class="flex items-center space-x-3 px-4 py-3 text-red-600">
+          <mat-icon class="text-red-600">logout</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button mat-icon-button class="lg:hidden" *ngIf="currentUser" [matMenuTriggerFor]="mobileMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #mobileMenu="matMenu" class="mt-2">
+      <button mat-menu-item routerLink="/dashboard" class="flex items-center space-x-3 px-4 py-3">
+        <mat-icon>dashboard</mat-icon>
+        <span>Tableau de bord</span>
+      </button>
+      <button mat-menu-item routerLink="/patients" class="flex items-center space-x-3 px-4 py-3"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon>people</mat-icon>
+        <span>Patients</span>
+      </button>
+      <button mat-menu-item routerLink="/appointments" class="flex items-center space-x-3 px-4 py-3"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon>event</mat-icon>
+        <span>Rendez-vous</span>
+      </button>
+      <button mat-menu-item routerLink="/calendar" class="flex items-center space-x-3 px-4 py-3"
+              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY])">
+        <mat-icon>calendar_today</mat-icon>
+        <span>Calendrier</span>
       </button>
     </mat-menu>
   </div>

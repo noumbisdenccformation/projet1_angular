@@ -1,336 +1,287 @@
-<div class="patient-form-container">
-  <!-- En-tête -->
-  <div class="form-header">
-    <h1>{{ isEditMode ? 'Modifier le patient' : 'Nouveau patient' }}</h1>
-    <p>{{ isEditMode ? 'Modifiez les informations du patient' : 'Ajoutez un nouveau patient à la clinique' }}</p>
-  </div>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- En-tête -->
+    <div class="mb-6 fade-in">
+      <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+        <mat-icon class="mr-3 text-clinic-primary text-4xl">
+          {{ isEditMode ? 'edit' : 'person_add' }}
+        </mat-icon>
+        {{ isEditMode ? 'Modifier le patient' : 'Nouveau patient' }}
+      </h1>
+      <p class="text-gray-600 mt-1">
+        {{ isEditMode ? 'Modifiez les informations du patient' : 'Ajoutez un nouveau patient à la base de données' }}
+      </p>
+    </div>
 
-  <!-- État de chargement -->
-  <div class="loading-container" *ngIf="isLoading">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Chargement des données du patient...</p>
-  </div>
+    <!-- Indicateur de chargement -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+      <span class="ml-4 text-gray-600">Chargement des données...</span>
+    </div>
 
-  <!-- Formulaire -->
-  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
-    
-    <!-- Informations personnelles -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>person</mat-icon>
+    <!-- Formulaire -->
+    <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+      
+      <!-- Informations personnelles -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">person</mat-icon>
           Informations personnelles
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Prénom *</mat-label>
             <input matInput formControlName="firstName" placeholder="Prénom du patient">
-            <mat-error *ngIf="patientForm.get('firstName')?.hasError('required')">
-              {{ getErrorMessage('firstName') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('firstName')?.hasError('minlength')">
-              {{ getErrorMessage('firstName') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Nom *</mat-label>
             <input matInput formControlName="lastName" placeholder="Nom du patient">
-            <mat-error *ngIf="patientForm.get('lastName')?.hasError('required')">
-              {{ getErrorMessage('lastName') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('lastName')?.hasError('minlength')">
-              {{ getErrorMessage('lastName') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Date de naissance *</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="patientForm.get('dateOfBirth')?.hasError('required')">
-              {{ getErrorMessage('dateOfBirth') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('dateOfBirth') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Genre *</mat-label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Sexe *</mat-label>
             <mat-select formControlName="gender">
               <mat-option *ngFor="let option of genderOptions" [value]="option.value">
                 {{ option.label }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="patientForm.get('gender')?.hasError('required')">
-              {{ getErrorMessage('gender') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('gender') }}</mat-error>
           </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Coordonnées -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>contact_phone</mat-icon>
+      <!-- Contact -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">contact_phone</mat-icon>
           Coordonnées
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Téléphone *</mat-label>
-            <input matInput formControlName="phone" placeholder="Numéro de téléphone">
-            <mat-error *ngIf="patientForm.get('phone')?.hasError('required')">
-              {{ getErrorMessage('phone') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('phone')?.hasError('pattern')">
-              {{ getErrorMessage('phone') }}
-            </mat-error>
+            <input matInput formControlName="phone" placeholder="0123456789">
+            <mat-error>{{ getErrorMessage('phone') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" placeholder="Adresse email" type="email">
-            <mat-error *ngIf="patientForm.get('email')?.hasError('email')">
-              {{ getErrorMessage('email') }}
-            </mat-error>
+            <input matInput type="email" formControlName="email" placeholder="patient@email.com">
+            <mat-error>{{ getErrorMessage('email') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="w-full md:col-span-2">
             <mat-label>Adresse *</mat-label>
-            <input matInput formControlName="address" placeholder="Adresse complète">
-            <mat-error *ngIf="patientForm.get('address')?.hasError('required')">
-              {{ getErrorMessage('address') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('address')?.hasError('minlength')">
-              {{ getErrorMessage('address') }}
-            </mat-error>
+            <textarea matInput formControlName="address" rows="2" placeholder="Adresse complète"></textarea>
+            <mat-error>{{ getErrorMessage('address') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Ville *</mat-label>
             <input matInput formControlName="city" placeholder="Ville">
-            <mat-error *ngIf="patientForm.get('city')?.hasError('required')">
-              {{ getErrorMessage('city') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('city') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Code postal *</mat-label>
-            <input matInput formControlName="postalCode" placeholder="Code postal">
-            <mat-error *ngIf="patientForm.get('postalCode')?.hasError('required')">
-              {{ getErrorMessage('postalCode') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('postalCode')?.hasError('pattern')">
-              {{ getErrorMessage('postalCode') }}
-            </mat-error>
+            <input matInput formControlName="postalCode" placeholder="75001">
+            <mat-error>{{ getErrorMessage('postalCode') }}</mat-error>
           </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Contact d'urgence -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>emergency</mat-icon>
+      <!-- Contact d'urgence -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-red-600">emergency</mat-icon>
           Contact d'urgence
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Nom du contact *</mat-label>
-            <input matInput formControlName="emergencyContactName" placeholder="Nom du contact d'urgence">
-            <mat-error *ngIf="patientForm.get('emergencyContactName')?.hasError('required')">
-              {{ getErrorMessage('emergencyContactName') }}
-            </mat-error>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nom complet *</mat-label>
+            <input matInput formControlName="emergencyContactName" placeholder="Nom du contact">
+            <mat-error>{{ getErrorMessage('emergencyContactName') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Téléphone du contact *</mat-label>
-            <input matInput formControlName="emergencyContactPhone" placeholder="Téléphone du contact">
-            <mat-error *ngIf="patientForm.get('emergencyContactPhone')?.hasError('required')">
-              {{ getErrorMessage('emergencyContactPhone') }}
-            </mat-error>
-            <mat-error *ngIf="patientForm.get('emergencyContactPhone')?.hasError('pattern')">
-              {{ getErrorMessage('emergencyContactPhone') }}
-            </mat-error>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Téléphone *</mat-label>
+            <input matInput formControlName="emergencyContactPhone" placeholder="0123456789">
+            <mat-error>{{ getErrorMessage('emergencyContactPhone') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Relation *</mat-label>
             <mat-select formControlName="emergencyContactRelationship">
               <mat-option *ngFor="let option of relationshipOptions" [value]="option.value">
                 {{ option.label }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="patientForm.get('emergencyContactRelationship')?.hasError('required')">
-              {{ getErrorMessage('emergencyContactRelationship') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('emergencyContactRelationship') }}</mat-error>
           </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Antécédents médicaux -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>medical_services</mat-icon>
+      <!-- Antécédents médicaux -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">medical_services</mat-icon>
           Antécédents médicaux
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
+        </h2>
         
         <!-- Allergies -->
-        <div class="array-section">
-          <div class="array-header">
-            <h3>Allergies</h3>
-            <button type="button" mat-mini-fab color="primary" (click)="addArrayItem('allergies')">
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-medium text-gray-700">Allergies</h3>
+            <button type="button" mat-raised-button color="primary" (click)="addArrayItem('allergies')" class="text-sm">
               <mat-icon>add</mat-icon>
+              Ajouter
             </button>
           </div>
-          <div class="array-items" formArrayName="allergies">
-            <div class="array-item" *ngFor="let allergy of allergiesArray.controls; let i = index">
-              <mat-form-field appearance="outline">
+          <div class="space-y-3" *ngIf="allergiesArray.length > 0">
+            <div *ngFor="let control of allergiesArray.controls; let i = index" class="flex items-center space-x-3">
+              <mat-form-field appearance="outline" class="flex-1">
                 <mat-label>Allergie {{ i + 1 }}</mat-label>
-                <input matInput [formControlName]="i" placeholder="Ex: Pénicilline, Latex...">
-                <mat-error *ngIf="allergy.hasError('required')">
-                  {{ getArrayErrorMessage('allergies', i) }}
-                </mat-error>
+                <input matInput [formControl]="control" placeholder="Ex: Pénicilline">
+                <mat-error>{{ getArrayErrorMessage('allergies', i) }}</mat-error>
               </mat-form-field>
               <button type="button" mat-icon-button color="warn" (click)="removeArrayItem('allergies', i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
+          <p class="text-gray-500 text-sm" *ngIf="allergiesArray.length === 0">
+            Aucune allergie renseignée
+          </p>
         </div>
 
-        <mat-divider></mat-divider>
-
         <!-- Maladies chroniques -->
-        <div class="array-section">
-          <div class="array-header">
-            <h3>Maladies chroniques</h3>
-            <button type="button" mat-mini-fab color="primary" (click)="addArrayItem('chronicDiseases')">
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-medium text-gray-700">Maladies chroniques</h3>
+            <button type="button" mat-raised-button color="primary" (click)="addArrayItem('chronicDiseases')" class="text-sm">
               <mat-icon>add</mat-icon>
+              Ajouter
             </button>
           </div>
-          <div class="array-items" formArrayName="chronicDiseases">
-            <div class="array-item" *ngFor="let disease of chronicDiseasesArray.controls; let i = index">
-              <mat-form-field appearance="outline">
+          <div class="space-y-3" *ngIf="chronicDiseasesArray.length > 0">
+            <div *ngFor="let control of chronicDiseasesArray.controls; let i = index" class="flex items-center space-x-3">
+              <mat-form-field appearance="outline" class="flex-1">
                 <mat-label>Maladie {{ i + 1 }}</mat-label>
-                <input matInput [formControlName]="i" placeholder="Ex: Diabète, Hypertension...">
-                <mat-error *ngIf="disease.hasError('required')">
-                  {{ getArrayErrorMessage('chronicDiseases', i) }}
-                </mat-error>
+                <input matInput [formControl]="control" placeholder="Ex: Diabète">
+                <mat-error>{{ getArrayErrorMessage('chronicDiseases', i) }}</mat-error>
               </mat-form-field>
               <button type="button" mat-icon-button color="warn" (click)="removeArrayItem('chronicDiseases', i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
+          <p class="text-gray-500 text-sm" *ngIf="chronicDiseasesArray.length === 0">
+            Aucune maladie chronique renseignée
+          </p>
         </div>
 
-        <mat-divider></mat-divider>
-
         <!-- Chirurgies -->
-        <div class="array-section">
-          <div class="array-header">
-            <h3>Chirurgies</h3>
-            <button type="button" mat-mini-fab color="primary" (click)="addArrayItem('surgeries')">
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-medium text-gray-700">Chirurgies</h3>
+            <button type="button" mat-raised-button color="primary" (click)="addArrayItem('surgeries')" class="text-sm">
               <mat-icon>add</mat-icon>
+              Ajouter
             </button>
           </div>
-          <div class="array-items" formArrayName="surgeries">
-            <div class="array-item" *ngFor="let surgery of surgeriesArray.controls; let i = index">
-              <mat-form-field appearance="outline">
+          <div class="space-y-3" *ngIf="surgeriesArray.length > 0">
+            <div *ngFor="let control of surgeriesArray.controls; let i = index" class="flex items-center space-x-3">
+              <mat-form-field appearance="outline" class="flex-1">
                 <mat-label>Chirurgie {{ i + 1 }}</mat-label>
-                <input matInput [formControlName]="i" placeholder="Ex: Appendicectomie 2010...">
-                <mat-error *ngIf="surgery.hasError('required')">
-                  {{ getArrayErrorMessage('surgeries', i) }}
-                </mat-error>
+                <input matInput [formControl]="control" placeholder="Ex: Appendicectomie 2020">
+                <mat-error>{{ getArrayErrorMessage('surgeries', i) }}</mat-error>
               </mat-form-field>
               <button type="button" mat-icon-button color="warn" (click)="removeArrayItem('surgeries', i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
+          <p class="text-gray-500 text-sm" *ngIf="surgeriesArray.length === 0">
+            Aucune chirurgie renseignée
+          </p>
         </div>
 
-        <mat-divider></mat-divider>
-
         <!-- Médicaments -->
-        <div class="array-section">
-          <div class="array-header">
-            <h3>Médicaments actuels</h3>
-            <button type="button" mat-mini-fab color="primary" (click)="addArrayItem('medications')">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-medium text-gray-700">Médicaments actuels</h3>
+            <button type="button" mat-raised-button color="primary" (click)="addArrayItem('medications')" class="text-sm">
               <mat-icon>add</mat-icon>
+              Ajouter
             </button>
           </div>
-          <div class="array-items" formArrayName="medications">
-            <div class="array-item" *ngFor="let medication of medicationsArray.controls; let i = index">
-              <mat-form-field appearance="outline">
+          <div class="space-y-3" *ngIf="medicationsArray.length > 0">
+            <div *ngFor="let control of medicationsArray.controls; let i = index" class="flex items-center space-x-3">
+              <mat-form-field appearance="outline" class="flex-1">
                 <mat-label>Médicament {{ i + 1 }}</mat-label>
-                <input matInput [formControlName]="i" placeholder="Ex: Amlodipine 5mg...">
-                <mat-error *ngIf="medication.hasError('required')">
-                  {{ getArrayErrorMessage('medications', i) }}
-                </mat-error>
+                <input matInput [formControl]="control" placeholder="Ex: Paracétamol 500mg">
+                <mat-error>{{ getArrayErrorMessage('medications', i) }}</mat-error>
               </mat-form-field>
               <button type="button" mat-icon-button color="warn" (click)="removeArrayItem('medications', i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
+          <p class="text-gray-500 text-sm" *ngIf="medicationsArray.length === 0">
+            Aucun médicament renseigné
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Assurance -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>receipt</mat-icon>
-          Informations d'assurance
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Organisme d'assurance</mat-label>
-            <input matInput formControlName="insuranceProvider" placeholder="Ex: CPAM, MGEN...">
+      <!-- Assurance -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">security</mat-icon>
+          Assurance (optionnel)
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Organisme</mat-label>
+            <input matInput formControlName="insuranceProvider" placeholder="Ex: CPAM">
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Numéro de police</mat-label>
-            <input matInput formControlName="insurancePolicyNumber" placeholder="Numéro de police">
+            <input matInput formControlName="insurancePolicyNumber" placeholder="123456789">
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Numéro de groupe</mat-label>
-            <input matInput formControlName="insuranceGroupNumber" placeholder="Numéro de groupe">
+            <input matInput formControlName="insuranceGroupNumber" placeholder="001">
           </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Actions -->
-    <div class="form-actions">
-      <button type="button" mat-button (click)="onCancel()">
-        <mat-icon>cancel</mat-icon>
-        Annuler
-      </button>
-      <button type="submit" mat-raised-button color="primary" 
-              [disabled]="patientForm.invalid || isSubmitting">
-        <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
-        <mat-icon *ngIf="!isSubmitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-        <span>{{ isEditMode ? 'Modifier' : 'Créer' }} le patient</span>
-      </button>
-    </div>
-  </form>
+      <!-- Boutons d'action -->
+      <div class="flex items-center justify-end space-x-4 bg-white rounded-lg shadow-md p-6">
+        <button type="button" mat-button (click)="onCancel()" [disabled]="isSubmitting" class="clinic-button-secondary">
+          Annuler
+        </button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="patientForm.invalid || isSubmitting" class="clinic-button-primary">
+          <mat-spinner diameter="20" *ngIf="isSubmitting" class="mr-2"></mat-spinner>
+          <mat-icon *ngIf="!isSubmitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          <span class="ml-2">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

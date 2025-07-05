@@ -1,159 +1,202 @@
-<div class="dashboard-container">
+<div class="min-h-screen bg-gray-50 p-6">
   <!-- En-tête du dashboard -->
-  <div class="dashboard-header">
-    <div class="welcome-section">
-      <h1>{{ getWelcomeMessage() }}</h1>
-      <p class="role-info">{{ getRoleDisplayName() }}</p>
-      <p class="date-info">{{ currentDate | date:'EEEE d MMMM yyyy' }}</p>
+  <div class="mb-8 fade-in">
+    <div class="bg-white rounded-lg shadow-md p-6 clinic-gradient text-white">
+      <h1 class="text-3xl font-bold mb-2">{{ getWelcomeMessage() }}</h1>
+      <div class="flex items-center space-x-4 text-white/90">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-white/20">
+          <mat-icon class="text-sm mr-1">badge</mat-icon>
+          {{ getRoleDisplayName() }}
+        </span>
+        <span class="flex items-center">
+          <mat-icon class="text-sm mr-1">calendar_today</mat-icon>
+          {{ currentDate | date:'EEEE d MMMM yyyy':'fr' }}
+        </span>
+      </div>
     </div>
   </div>
 
   <!-- Statistiques principales -->
-  <div class="stats-grid">
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-content">
-          <div class="stat-icon patients">
-            <mat-icon>people</mat-icon>
-          </div>
-          <div class="stat-info">
-            <h3>{{ totalPatients }}</h3>
-            <p>Patients</p>
-          </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Patients</p>
+          <p class="text-3xl font-bold text-gray-900">{{ totalPatients }}</p>
+          <p class="text-sm text-green-600 flex items-center mt-1">
+            <mat-icon class="text-sm mr-1">trending_up</mat-icon>
+            +12% ce mois
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="bg-blue-100 p-3 rounded-full">
+          <mat-icon class="text-blue-600 text-2xl">people</mat-icon>
+        </div>
+      </div>
+    </div>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-content">
-          <div class="stat-icon appointments">
-            <mat-icon>event</mat-icon>
-          </div>
-          <div class="stat-info">
-            <h3>{{ todayAppointments }}</h3>
-            <p>RDV Aujourd'hui</p>
-          </div>
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">RDV Aujourd'hui</p>
+          <p class="text-3xl font-bold text-gray-900">{{ todayAppointments }}</p>
+          <p class="text-sm text-blue-600 flex items-center mt-1">
+            <mat-icon class="text-sm mr-1">schedule</mat-icon>
+            3 en cours
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="bg-green-100 p-3 rounded-full">
+          <mat-icon class="text-green-600 text-2xl">event</mat-icon>
+        </div>
+      </div>
+    </div>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-content">
-          <div class="stat-icon invoices">
-            <mat-icon>receipt</mat-icon>
-          </div>
-          <div class="stat-info">
-            <h3>{{ pendingInvoices }}</h3>
-            <p>Factures en attente</p>
-          </div>
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Factures en attente</p>
+          <p class="text-3xl font-bold text-gray-900">{{ pendingInvoices }}</p>
+          <p class="text-sm text-orange-600 flex items-center mt-1">
+            <mat-icon class="text-sm mr-1">warning</mat-icon>
+            À traiter
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="bg-orange-100 p-3 rounded-full">
+          <mat-icon class="text-orange-600 text-2xl">receipt</mat-icon>
+        </div>
+      </div>
+    </div>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-content">
-          <div class="stat-icon revenue">
-            <mat-icon>euro</mat-icon>
-          </div>
-          <div class="stat-info">
-            <h3>{{ monthlyRevenue | currency:'EUR':'symbol':'1.0-0' }}</h3>
-            <p>Revenus du mois</p>
-          </div>
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Revenus du mois</p>
+          <p class="text-3xl font-bold text-gray-900">{{ monthlyRevenue | currency:'EUR':'symbol':'1.0-0' }}</p>
+          <p class="text-sm text-green-600 flex items-center mt-1">
+            <mat-icon class="text-sm mr-1">trending_up</mat-icon>
+            +8% vs mois dernier
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="bg-purple-100 p-3 rounded-full">
+          <mat-icon class="text-purple-600 text-2xl">euro</mat-icon>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Actions rapides -->
-  <div class="quick-actions">
-    <h2>Actions rapides</h2>
-    <div class="actions-grid">
-      <button mat-raised-button color="primary" routerLink="/patients/new" 
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <mat-icon class="mr-2 text-clinic-primary">flash_on</mat-icon>
+      Actions rapides
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <button mat-raised-button 
+              class="h-16 clinic-button-primary flex flex-col items-center justify-center space-y-1" 
+              routerLink="/patients/new" 
               *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
         <mat-icon>person_add</mat-icon>
-        Nouveau patient
+        <span class="text-sm">Nouveau patient</span>
       </button>
       
-      <button mat-raised-button color="accent" routerLink="/appointments/new"
+      <button mat-raised-button 
+              class="h-16 bg-green-600 hover:bg-green-700 text-white flex flex-col items-center justify-center space-y-1" 
+              routerLink="/appointments/new"
               *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
         <mat-icon>event_available</mat-icon>
-        Nouveau RDV
+        <span class="text-sm">Nouveau RDV</span>
       </button>
       
-      <button mat-raised-button color="warn" routerLink="/prescriptions/new"
+      <button mat-raised-button 
+              class="h-16 bg-purple-600 hover:bg-purple-700 text-white flex flex-col items-center justify-center space-y-1" 
+              routerLink="/prescriptions/new"
               *ngIf="authService.hasAnyRole([UserRole.DOCTOR])">
         <mat-icon>medication</mat-icon>
-        Nouvelle prescription
+        <span class="text-sm">Prescription</span>
       </button>
       
-      <button mat-raised-button routerLink="/calendar">
+      <button mat-raised-button 
+              class="h-16 bg-orange-600 hover:bg-orange-700 text-white flex flex-col items-center justify-center space-y-1" 
+              routerLink="/calendar">
         <mat-icon>calendar_today</mat-icon>
-        Voir le calendrier
+        <span class="text-sm">Calendrier</span>
       </button>
     </div>
   </div>
 
   <!-- Contenu spécifique au rôle -->
-  <div class="role-specific-content">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Pour les médecins -->
-    <div *ngIf="authService.isDoctor()" class="doctor-content">
-      <div class="content-section">
-        <h2>Mes patients récents</h2>
-        <div class="patients-list">
-          <mat-card *ngFor="let patient of recentPatients" class="patient-card">
-            <mat-card-content>
-              <div class="patient-info">
-                <h4>{{ patient.firstName }} {{ patient.lastName }}</h4>
-                <p>Dossier: {{ patient.fileNumber }}</p>
-                <p>Téléphone: {{ patient.phone }}</p>
-              </div>
-              <button mat-button color="primary" [routerLink]="['/patients', patient.id]">
-                Voir détails
-              </button>
-            </mat-card-content>
-          </mat-card>
+    <div *ngIf="authService.isDoctor()" class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <mat-icon class="mr-2 text-blue-600">people</mat-icon>
+        Mes patients récents
+      </h2>
+      <div class="space-y-3">
+        <div *ngFor="let patient of recentPatients" 
+             class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <mat-icon class="text-blue-600">person</mat-icon>
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-900">{{ patient.firstName }} {{ patient.lastName }}</h4>
+              <p class="text-sm text-gray-600">{{ patient.fileNumber }} • {{ patient.phone }}</p>
+            </div>
+          </div>
+          <button mat-button color="primary" [routerLink]="['/patients', patient.id]" 
+                  class="text-sm">
+            Voir
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Pour les secrétaires -->
-    <div *ngIf="authService.isSecretary()" class="secretary-content">
-      <div class="content-section">
-        <h2>Rendez-vous à venir</h2>
-        <div class="appointments-list">
-          <mat-card *ngFor="let appointment of upcomingAppointments" class="appointment-card">
-            <mat-card-content>
-              <div class="appointment-info">
-                <h4>{{ appointment.patientName }}</h4>
-                <p>{{ appointment.time }} - {{ appointment.type }}</p>
-                <p>{{ appointment.doctor }}</p>
-              </div>
-              <button mat-button color="primary" [routerLink]="['/appointments', appointment.id]">
-                Voir détails
-              </button>
-            </mat-card-content>
-          </mat-card>
+    <div *ngIf="authService.isSecretary()" class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <mat-icon class="mr-2 text-green-600">event</mat-icon>
+        Rendez-vous à venir
+      </h2>
+      <div class="space-y-3">
+        <div *ngFor="let appointment of upcomingAppointments" 
+             class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <mat-icon class="text-green-600">schedule</mat-icon>
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-900">{{ appointment.patientName }}</h4>
+              <p class="text-sm text-gray-600">{{ appointment.time }} • {{ appointment.type }}</p>
+              <p class="text-xs text-gray-500">{{ appointment.doctor }}</p>
+            </div>
+          </div>
+          <button mat-button color="primary" [routerLink]="['/appointments', appointment.id]" 
+                  class="text-sm">
+            Voir
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Pour les administrateurs -->
-    <div *ngIf="authService.isAdmin()" class="admin-content">
-      <div class="content-section">
-        <h2>Gestion du système</h2>
-        <div class="admin-actions">
-          <button mat-raised-button color="primary" routerLink="/admin/users">
-            <mat-icon>manage_accounts</mat-icon>
-            Gestion des utilisateurs
-          </button>
-          <button mat-raised-button color="accent" routerLink="/admin/statistics">
-            <mat-icon>analytics</mat-icon>
-            Statistiques détaillées
-          </button>
-        </div>
+    <div *ngIf="authService.isAdmin()" class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <mat-icon class="mr-2 text-purple-600">admin_panel_settings</mat-icon>
+        Gestion du système
+      </h2>
+      <div class="space-y-3">
+        <button mat-raised-button 
+                class="w-full h-14 clinic-button-primary flex items-center justify-center space-x-2" 
+                routerLink="/admin/users">
+          <mat-icon>manage_accounts</mat-icon>
+          <span>Gestion des utilisateurs</span>
+        </button>
+        <button mat-raised-button 
+                class="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center space-x-2" 
+                routerLink="/admin/statistics">
+          <mat-icon>analytics</mat-icon>
+          <span>Statistiques détaillées</span>
+        </button>
       </div>
     </div>
   </div>

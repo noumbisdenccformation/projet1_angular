@@ -1,5 +1,5 @@
 export interface Medication {
-  id: number;
+  id?: number;
   name: string;
   dosage: string;
   frequency: string;
@@ -31,13 +31,5 @@ export interface PrescriptionFormData {
   doctorId: number;
   diagnosis: string;
   notes?: string;
-  medications: {
-    name: string;
-    dosage: string;
-    frequency: string;
-    duration: string;
-    instructions: string;
-    quantity: number;
-    unit: string;
-  }[];
+  medications: Medication[];
 } 

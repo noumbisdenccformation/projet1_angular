@@ -1,125 +1,178 @@
-<div class="calendar-container">
+<div class="min-h-screen bg-gray-50 p-6">
   <!-- En-tête -->
-  <div class="header">
-    <h1>Calendrier des Rendez-vous</h1>
-    <div class="header-actions">
-      <button mat-raised-button color="primary" routerLink="/appointments/new">
-        <mat-icon>add</mat-icon>
-        Nouveau Rendez-vous
-      </button>
+  <div class="flex items-center justify-between mb-6 fade-in">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+        <mat-icon class="mr-3 text-clinic-primary text-4xl">calendar_today</mat-icon>
+        Calendrier des Rendez-vous
+      </h1>
+      <p class="text-gray-600 mt-1">Gestion et planification des consultations</p>
     </div>
+    <button mat-raised-button 
+            class="clinic-button-primary flex items-center space-x-2" 
+            routerLink="/appointments/new"
+            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+      <mat-icon>add</mat-icon>
+      <span>Nouveau Rendez-vous</span>
+    </button>
   </div>
 
   <!-- Contrôles du calendrier -->
-  <mat-card class="controls-card">
-    <mat-card-content>
-      <div class="calendar-controls">
-        <!-- Filtre par médecin -->
-        <mat-form-field appearance="outline" *ngIf="!authService.isDoctor()">
-          <mat-label>Filtrer par médecin</mat-label>
-          <mat-select [(ngModel)]="selectedDoctor" (selectionChange)="onDoctorChange()">
-            <mat-option [value]="null">Tous les médecins</mat-option>
-            <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
-              {{ doctor.name }} - {{ doctor.specialty }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex flex-wrap items-center gap-4">
+      <!-- Filtre par médecin -->
+      <mat-form-field appearance="outline" class="min-w-48" *ngIf="!authService.isDoctor()">
+        <mat-label>Filtrer par médecin</mat-label>
+        <mat-select [(ngModel)]="selectedDoctor" (selectionChange)="onDoctorChange()">
+          <mat-option [value]="null">Tous les médecins</mat-option>
+          <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+            {{ doctor.name }} - {{ doctor.specialty }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <!-- Sélection de vue -->
-        <mat-form-field appearance="outline">
-          <mat-label>Vue</mat-label>
-          <mat-select [(ngModel)]="selectedView" (selectionChange)="onViewChange()">
-            <mat-option value="timeGridWeek">Semaine</mat-option>
-            <mat-option value="timeGridDay">Jour</mat-option>
-            <mat-option value="dayGridMonth">Mois</mat-option>
-            <mat-option value="listWeek">Liste</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Sélection de vue -->
+      <mat-form-field appearance="outline" class="min-w-32">
+        <mat-label>Vue</mat-label>
+        <mat-select [(ngModel)]="selectedView" (selectionChange)="onViewChange()">
+          <mat-option value="timeGridWeek">
+            <div class="flex items-center">
+              <mat-icon class="mr-2 text-sm">view_week</mat-icon>
+              Semaine
+            </div>
+          </mat-option>
+          <mat-option value="timeGridDay">
+            <div class="flex items-center">
+              <mat-icon class="mr-2 text-sm">view_day</mat-icon>
+              Jour
+            </div>
+          </mat-option>
+          <mat-option value="dayGridMonth">
+            <div class="flex items-center">
+              <mat-icon class="mr-2 text-sm">view_module</mat-icon>
+              Mois
+            </div>
+          </mat-option>
+          <mat-option value="listWeek">
+            <div class="flex items-center">
+              <mat-icon class="mr-2 text-sm">list</mat-icon>
+              Liste
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <!-- Navigation rapide -->
-        <div class="navigation-buttons">
-          <button mat-icon-button (click)="goToPrev()" matTooltip="Précédent">
-            <mat-icon>chevron_left</mat-icon>
-          </button>
-          <button mat-button (click)="goToToday()" matTooltip="Aujourd'hui">
-            Aujourd'hui
-          </button>
-          <button mat-icon-button (click)="goToNext()" matTooltip="Suivant">
-            <mat-icon>chevron_right</mat-icon>
-          </button>
-        </div>
+      <!-- Navigation rapide -->
+      <div class="flex items-center space-x-2 ml-auto">
+        <button mat-icon-button (click)="goToPrev()" 
+                class="hover:bg-gray-100 transition-colors" 
+                matTooltip="Précédent">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-button (click)="goToToday()" 
+                class="px-4 py-2 bg-clinic-primary text-white rounded-md hover:bg-clinic-secondary transition-colors" 
+                matTooltip="Aujourd'hui">
+          Aujourd'hui
+        </button>
+        <button mat-icon-button (click)="goToNext()" 
+                class="hover:bg-gray-100 transition-colors" 
+                matTooltip="Suivant">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
   <!-- Légende des statuts -->
-  <mat-card class="legend-card">
-    <mat-card-content>
-      <div class="legend">
-        <h3>Légende des statuts</h3>
-        <div class="legend-items">
-          <div class="legend-item">
-            <div class="legend-color confirmed"></div>
-            <span>Confirmé</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color scheduled"></div>
-            <span>Programmé</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color in-progress"></div>
-            <span>En cours</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color completed"></div>
-            <span>Terminé</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color cancelled"></div>
-            <span>Annulé</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color no-show"></div>
-            <span>Absent</span>
-          </div>
-        </div>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+      <mat-icon class="mr-2 text-clinic-primary">palette</mat-icon>
+      Légende des statuts
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-green-500"></div>
+        <span class="text-sm text-gray-700">Confirmé</span>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+        <span class="text-sm text-gray-700">Programmé</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-orange-500"></div>
+        <span class="text-sm text-gray-700">En cours</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+        <span class="text-sm text-gray-700">Terminé</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-red-500"></div>
+        <span class="text-sm text-gray-700">Annulé</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full bg-gray-600"></div>
+        <span class="text-sm text-gray-700">Absent</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Calendrier FullCalendar -->
-  <mat-card class="calendar-card">
-    <mat-card-content>
-      <div class="calendar-wrapper">
-        <!-- Indicateur de chargement -->
-        <div *ngIf="loading" class="loading-overlay">
-          <mat-spinner diameter="50"></mat-spinner>
-          <p>Chargement du calendrier...</p>
-        </div>
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="relative">
+      <!-- Indicateur de chargement -->
+      <div *ngIf="loading" 
+           class="absolute inset-0 bg-white bg-opacity-75 flex flex-col items-center justify-center z-10">
+        <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+        <p class="text-gray-600">Chargement du calendrier...</p>
+      </div>
 
-        <!-- Calendrier -->
+      <!-- Calendrier -->
+      <div class="p-4">
         <full-calendar 
           #calendar
           [options]="calendarOptions"
-          class="full-calendar">
+          class="w-full">
         </full-calendar>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
   <!-- Instructions -->
-  <mat-card class="instructions-card">
-    <mat-card-content>
-      <div class="instructions">
-        <h3>Instructions d'utilisation</h3>
-        <ul>
-          <li><strong>Cliquer sur un créneau vide</strong> : Créer un nouveau rendez-vous</li>
-          <li><strong>Cliquer sur un rendez-vous</strong> : Voir/modifier les détails</li>
-          <li><strong>Glisser-déposer</strong> : Déplacer un rendez-vous</li>
-          <li><strong>Redimensionner</strong> : Modifier la durée d'un rendez-vous</li>
-          <li><strong>Double-clic</strong> : Accéder rapidement aux détails</li>
-        </ul>
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
+    <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+      <mat-icon class="mr-2 text-blue-600">help_outline</mat-icon>
+      Instructions d'utilisation
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
+      <div class="flex items-start space-x-2">
+        <mat-icon class="text-blue-500 text-lg mt-0.5">touch_app</mat-icon>
+        <div>
+          <strong>Cliquer sur un créneau vide</strong><br>
+          Créer un nouveau rendez-vous
+        </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div class="flex items-start space-x-2">
+        <mat-icon class="text-blue-500 text-lg mt-0.5">event</mat-icon>
+        <div>
+          <strong>Cliquer sur un rendez-vous</strong><br>
+          Voir/modifier les détails
+        </div>
+      </div>
+      <div class="flex items-start space-x-2">
+        <mat-icon class="text-blue-500 text-lg mt-0.5">drag_indicator</mat-icon>
+        <div>
+          <strong>Glisser-déposer</strong><br>
+          Déplacer un rendez-vous
+        </div>
+      </div>
+      <div class="flex items-start space-x-2">
+        <mat-icon class="text-blue-500 text-lg mt-0.5">open_with</mat-icon>
+        <div>
+          <strong>Redimensionner</strong><br>
+          Modifier la durée d'un rendez-vous
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

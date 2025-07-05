@@ -1,0 +1,87 @@
+/* Styles personnalisés pour le chat */
+.chat-container {
+  height: calc(100vh - 120px);
+}
+
+.messages-container {
+  scroll-behavior: smooth;
+}
+
+.message-bubble {
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message-input {
+  resize: none;
+  min-height: 40px;
+  max-height: 120px;
+}
+
+/* Animation pour les nouveaux messages */
+@keyframes slideInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.new-message {
+  animation: slideInMessage 0.3s ease-out;
+}
+
+/* Styles pour les conversations */
+.conversation-item:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.conversation-item.active {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-right: 3px solid #3b82f6;
+}
+
+/* Indicateur de statut en ligne */
+.online-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+/* Scrollbar personnalisée */
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chat-container {
+    height: calc(100vh - 80px);
+  }
+  
+  .message-bubble {
+    max-width: 85%;
+  }
+}

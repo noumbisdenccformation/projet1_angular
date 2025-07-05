@@ -1,5 +1,8 @@
-<app-navbar *ngIf="!isLoginPage() && authService.isAuthenticated()"></app-navbar>
-
-<main class="main-content" [class.with-navbar]="!isLoginPage() && authService.isAuthenticated()">
-  <router-outlet></router-outlet>
-</main> 
+<div class="min-h-screen bg-gray-50">
+  <app-navbar *ngIf="!isLoginPage() && authService.isAuthenticated()"></app-navbar>
+  
+  <main class="transition-all duration-300" 
+        [class]="!isLoginPage() && authService.isAuthenticated() ? 'pt-0' : ''">
+    <router-outlet></router-outlet>
+  </main>
+</div> 

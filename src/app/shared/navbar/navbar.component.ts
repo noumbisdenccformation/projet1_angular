@@ -59,4 +59,11 @@ export class NavbarComponent implements OnInit {
       default: return role;
     }
   }
+
+  getUserInitials(): string {
+    if (!this.currentUser) return '';
+    const firstInitial = this.currentUser.firstName?.charAt(0) || '';
+    const lastInitial = this.currentUser.lastName?.charAt(0) || '';
+    return (firstInitial + lastInitial).toUpperCase();
+  }
 } 

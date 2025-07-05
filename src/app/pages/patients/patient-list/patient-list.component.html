@@ -1,180 +1,184 @@
-<div class="patient-list-container">
+<div class="min-h-screen bg-gray-50 p-6">
   <!-- En-tête avec titre et bouton d'ajout -->
-  <div class="list-header">
-    <div class="header-content">
-      <h1>Gestion des Patients</h1>
-      <p>Liste complète des patients de la clinique</p>
+  <div class="flex items-center justify-between mb-6 fade-in">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+        <mat-icon class="mr-3 text-clinic-primary text-4xl">people</mat-icon>
+        Gestion des Patients
+      </h1>
+      <p class="text-gray-600 mt-1">Liste complète des patients de la clinique</p>
     </div>
-    <div class="header-actions">
-      <button mat-raised-button color="primary" routerLink="/patients/new" 
-              *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
-        <mat-icon>person_add</mat-icon>
-        Nouveau Patient
-      </button>
-    </div>
+    <button mat-raised-button 
+            class="clinic-button-primary flex items-center space-x-2" 
+            routerLink="/patients/new" 
+            *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+      <mat-icon>person_add</mat-icon>
+      <span>Nouveau Patient</span>
+    </button>
   </div>
 
   <!-- Barre de recherche et filtres -->
-  <mat-card class="search-card">
-    <mat-card-content>
-      <div class="search-section">
-        <mat-form-field appearance="outline" class="search-field">
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex-1">
+        <mat-form-field appearance="outline" class="w-full max-w-md">
           <mat-label>Rechercher un patient</mat-label>
           <input matInput [formControl]="searchControl" 
                  placeholder="Nom, prénom, numéro de dossier, téléphone...">
-          <mat-icon matSuffix>search</mat-icon>
+          <mat-icon matPrefix class="text-gray-400 mr-2">search</mat-icon>
           <button mat-icon-button matSuffix (click)="clearSearch()" 
-                  *ngIf="searchControl.value">
+                  *ngIf="searchControl.value" type="button">
             <mat-icon>clear</mat-icon>
           </button>
         </mat-form-field>
       </div>
       
-      <div class="stats-section">
-        <div class="stat-item">
-          <span class="stat-label">Total:</span>
-          <span class="stat-value">{{ totalItems }}</span>
+      <div class="flex items-center space-x-6 text-sm text-gray-600">
+        <div class="flex items-center space-x-2">
+          <span class="font-medium">Total:</span>
+          <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">{{ totalItems }}</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-label">Affichés:</span>
-          <span class="stat-value">{{ displayedPatients.length }}</span>
+        <div class="flex items-center space-x-2">
+          <span class="font-medium">Affichés:</span>
+          <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">{{ displayedPatients.length }}</span>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
   <!-- Tableau des patients -->
-  <mat-card class="table-card">
-    <mat-card-content>
-      <div class="table-container">
-        <table mat-table [dataSource]="displayedPatients" matSort (matSortChange)="onSortChange($event)">
-          
-          <!-- Numéro de dossier -->
-          <ng-container matColumnDef="fileNumber">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Dossier </th>
-            <td mat-cell *matCellDef="let patient">
-              <span class="file-number">{{ patient.fileNumber }}</span>
-            </td>
-          </ng-container>
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="displayedPatients" matSort (matSortChange)="onSortChange($event)" class="w-full">
+        
+        <!-- Numéro de dossier -->
+        <ng-container matColumnDef="fileNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-gray-700"> Dossier </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              {{ patient.fileNumber }}
+            </span>
+          </td>
+        </ng-container>
 
-          <!-- Prénom -->
-          <ng-container matColumnDef="firstName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Prénom </th>
-            <td mat-cell *matCellDef="let patient">
-              <div class="patient-name">
-                <span class="first-name">{{ patient.firstName }}</span>
-              </div>
-            </td>
-          </ng-container>
+        <!-- Prénom -->
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-gray-700"> Prénom </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <div class="font-medium text-gray-900">{{ patient.firstName }}</div>
+          </td>
+        </ng-container>
 
-          <!-- Nom -->
-          <ng-container matColumnDef="lastName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nom </th>
-            <td mat-cell *matCellDef="let patient">
-              <div class="patient-name">
-                <span class="last-name">{{ patient.lastName }}</span>
-                <span class="age">({{ getAge(patient.dateOfBirth) }} ans)</span>
-              </div>
-            </td>
-          </ng-container>
+        <!-- Nom -->
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-gray-700"> Nom </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <div>
+              <div class="font-medium text-gray-900">{{ patient.lastName }}</div>
+              <div class="text-sm text-gray-500">({{ getAge(patient.dateOfBirth) }} ans)</div>
+            </div>
+          </td>
+        </ng-container>
 
-          <!-- Téléphone -->
-          <ng-container matColumnDef="phone">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Téléphone </th>
-            <td mat-cell *matCellDef="let patient">
-              <div class="contact-info">
-                <span class="phone">{{ patient.phone }}</span>
-                <span class="email" *ngIf="patient.email">{{ patient.email }}</span>
-              </div>
-            </td>
-          </ng-container>
+        <!-- Téléphone -->
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-gray-700"> Contact </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <div>
+              <div class="text-sm font-medium text-gray-900">{{ patient.phone }}</div>
+              <div class="text-sm text-gray-500" *ngIf="patient.email">{{ patient.email }}</div>
+            </div>
+          </td>
+        </ng-container>
 
-          <!-- Médecin assigné -->
-          <ng-container matColumnDef="assignedDoctor">
-            <th mat-header-cell *matHeaderCellDef> Médecin </th>
-            <td mat-cell *matCellDef="let patient">
-              <span class="doctor" *ngIf="patient.assignedDoctorId">
-                Dr. {{ patient.assignedDoctorId === 1 ? 'Martin' : 'Dubois' }}
-              </span>
-              <span class="no-doctor" *ngIf="!patient.assignedDoctorId">
-                Non assigné
-              </span>
-            </td>
-          </ng-container>
+        <!-- Médecin assigné -->
+        <ng-container matColumnDef="assignedDoctor">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700"> Médecin </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" 
+                  *ngIf="patient.assignedDoctorId">
+              Dr. {{ patient.assignedDoctorId === 1 ? 'Martin' : 'Dubois' }}
+            </span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800" 
+                  *ngIf="!patient.assignedDoctorId">
+              Non assigné
+            </span>
+          </td>
+        </ng-container>
 
-          <!-- Date de création -->
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Créé le </th>
-            <td mat-cell *matCellDef="let patient">
-              <span class="date">{{ patient.createdAt | date:'dd/MM/yyyy' }}</span>
-            </td>
-          </ng-container>
+        <!-- Date de création -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-gray-700"> Créé le </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <span class="text-sm text-gray-900">{{ patient.createdAt | date:'dd/MM/yyyy' }}</span>
+          </td>
+        </ng-container>
 
-          <!-- Actions -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let patient">
-              <div class="actions">
-                <button mat-icon-button [matMenuTriggerFor]="menu" 
-                        [attr.aria-label]="'Menu pour ' + patient.firstName">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item [routerLink]="['/patients', patient.id]">
-                    <mat-icon>visibility</mat-icon>
-                    <span>Voir détails</span>
-                  </button>
-                  
-                  <button mat-menu-item [routerLink]="['/patients', patient.id, 'edit']"
-                          *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
-                    <mat-icon>edit</mat-icon>
-                    <span>Modifier</span>
-                  </button>
-                  
-                  <button mat-menu-item (click)="deletePatient(patient)"
-                          *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
-                    <mat-icon>delete</mat-icon>
-                    <span>Supprimer</span>
-                  </button>
-                </mat-menu>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-              [routerLink]="['/patients', row.id]"
-              class="patient-row"></tr>
-        </table>
-
-        <!-- État de chargement -->
-        <div class="loading-container" *ngIf="isLoading">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p>Chargement des patients...</p>
-        </div>
-
-        <!-- État vide -->
-        <div class="empty-container" *ngIf="!isLoading && displayedPatients.length === 0">
-          <mat-icon class="empty-icon">people_outline</mat-icon>
-          <h3>Aucun patient trouvé</h3>
-          <p *ngIf="searchControl.value">
-            Aucun patient ne correspond à votre recherche.
-            <button mat-button color="primary" (click)="clearSearch()">
-              Effacer la recherche
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700"> Actions </th>
+          <td mat-cell *matCellDef="let patient" class="py-4">
+            <button mat-icon-button [matMenuTriggerFor]="menu" 
+                    class="hover:bg-gray-100 transition-colors"
+                    [attr.aria-label]="'Menu pour ' + patient.firstName">
+              <mat-icon>more_vert</mat-icon>
             </button>
-          </p>
-          <p *ngIf="!searchControl.value">
-            Aucun patient n'a encore été ajouté.
-            <button mat-raised-button color="primary" routerLink="/patients/new"
-                    *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
-              Ajouter le premier patient
-            </button>
-          </p>
-        </div>
+            
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item [routerLink]="['/patients', patient.id]" class="flex items-center space-x-3">
+                <mat-icon class="text-blue-600">visibility</mat-icon>
+                <span>Voir détails</span>
+              </button>
+              
+              <button mat-menu-item [routerLink]="['/patients', patient.id, 'edit']" class="flex items-center space-x-3"
+                      *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+                <mat-icon class="text-green-600">edit</mat-icon>
+                <span>Modifier</span>
+              </button>
+              
+              <button mat-menu-item (click)="deletePatient(patient)" class="flex items-center space-x-3"
+                      *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+                <mat-icon class="text-red-600">delete</mat-icon>
+                <span>Supprimer</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-gray-50"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+            class="hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-200"
+            (click)="$event.stopPropagation()"></tr>
+      </table>
+
+      <!-- État de chargement -->
+      <div class="flex flex-col items-center justify-center py-12" *ngIf="isLoading">
+        <mat-spinner diameter="40" class="mb-4"></mat-spinner>
+        <p class="text-gray-600">Chargement des patients...</p>
       </div>
 
-      <!-- Pagination -->
+      <!-- État vide -->
+      <div class="flex flex-col items-center justify-center py-12" *ngIf="!isLoading && displayedPatients.length === 0">
+        <mat-icon class="text-6xl text-gray-300 mb-4">people_outline</mat-icon>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun patient trouvé</h3>
+        <div class="text-center" *ngIf="searchControl.value">
+          <p class="text-gray-600 mb-4">Aucun patient ne correspond à votre recherche.</p>
+          <button mat-button color="primary" (click)="clearSearch()" class="clinic-button-secondary">
+            Effacer la recherche
+          </button>
+        </div>
+        <div class="text-center" *ngIf="!searchControl.value">
+          <p class="text-gray-600 mb-4">Aucun patient n'a encore été ajouté.</p>
+          <button mat-raised-button routerLink="/patients/new" class="clinic-button-primary"
+                  *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])">
+            Ajouter le premier patient
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="border-t border-gray-200 bg-gray-50 px-4 py-3">
       <mat-paginator [length]="totalItems"
                      [pageSize]="pageSize"
                      [pageSizeOptions]="pageSizeOptions"
@@ -183,6 +187,6 @@
                      showFirstLastButtons
                      aria-label="Sélectionner la page">
       </mat-paginator>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>

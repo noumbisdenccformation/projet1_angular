@@ -113,6 +113,25 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.searchSubject.next(value);
   }
 
+  onSearch(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onFilter(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onSort(): void {
+    this.applyFilters();
+  }
+
+  toggleSortOrder(): void {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    this.applyFilters();
+  }
+
   onStatusFilterChange(): void {
     this.currentPage = 1;
     this.applyFilters();
@@ -226,29 +245,58 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/invoices/new']);
   }
 
-  editInvoice(invoice: Invoice): void {
-    this.router.navigate(['/invoices', invoice.id, 'edit']);
+  editInvoice(invoiceId: number): void {
+    this.router.navigate(['/invoices', invoiceId, 'edit']);
   }
 
-  viewInvoice(invoice: Invoice): void {
-    this.router.navigate(['/invoices', invoice.id]);
+  viewInvoice(invoiceId: number): void {
+    this.router.navigate(['/invoices', invoiceId]);
   }
 
-  deleteInvoice(invoice: Invoice): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer la facture ${invoice.invoiceNumber} ?`)) {
-      this.invoiceService.deleteInvoice(invoice.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.loadInvoices();
-            this.loadStats();
-          },
-          error: (error) => {
-            this.error = 'Erreur lors de la suppression: ' + error.message;
-          }
-        });
+  downloadPDF(invoiceId: number): void {
+    this.invoiceService.downloadInvoicePDF(invoiceId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `facture-${invoiceId}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du téléchargement:', error);
+        this.error = 'Erreur lors du téléchargement de la facture';
+      }
+    });
+  }
+
+  sendEmail(invoiceId: number): void {
+    this.invoiceService.sendInvoiceByEmail(invoiceId).subscribe({
+      next: () => {
+        alert('Facture envoyée par email avec succès !');
+      },
+      error: (error: any) => {
+        console.error('Erreur lors de l\'envoi:', error);
+        this.error = 'Erreur lors de l\'envoi de la facture';
+      }
+    });
+  }
+
+  deleteInvoice(invoiceId: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette facture ?')) {
+      this.invoiceService.deleteInvoice(invoiceId).subscribe({
+        next: () => {
+          this.loadInvoices();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression:', error);
+          this.error = 'Erreur lors de la suppression de la facture';
+        }
+      });
     }
   }
+
+
 
   markAsPaid(invoice: Invoice): void {
     if (confirm(`Marquer la facture ${invoice.invoiceNumber} comme payée ?`)) {
@@ -363,5 +411,60 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.sortOrder = 'desc';
     this.currentPage = 1;
     this.applyFilters();
+  }
+
+  // Propriétés pour les statistiques
+  get totalInvoices(): number {
+    return this.invoices.length;
+  }
+
+  get paidInvoices(): number {
+    return this.invoices.filter(invoice => invoice.status === 'PAID').length;
+  }
+
+  get pendingInvoices(): number {
+    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.PENDING).length;
+  }
+
+  get overdueInvoices(): number {
+    return this.invoices.filter(invoice => invoice.status === 'OVERDUE').length;
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.pageSize;
+  }
+
+  get endIndex(): number {
+    return Math.min(this.startIndex + this.pageSize, this.filteredInvoices.length);
+  }
+
+  get visiblePages(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const start = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+      const end = Math.min(this.totalPages, start + maxVisiblePages - 1);
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'PAID': return 'status-paid';
+      case 'SENT': return 'status-sent';
+      case 'OVERDUE': return 'status-overdue';
+      case 'CANCELLED': return 'status-cancelled';
+      default: return 'status-draft';
+    }
   }
 }

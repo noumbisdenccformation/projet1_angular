@@ -1,0 +1,151 @@
+<div class="invoice-detail-container">
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Chargement de la facture...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="invoice && !loading" class="invoice-content">
+    <!-- En-tête de la facture -->
+    <div class="invoice-header">
+      <div class="header-left">
+        <h1>Facture {{ invoice.invoiceNumber }}</h1>
+        <div class="invoice-meta">
+          <span class="meta-item">
+            <i class="fas fa-calendar"></i>
+            Créée le: {{ formatDate(invoice.createdAt) }}
+          </span>
+          <span class="meta-item">
+            <i class="fas fa-clock"></i>
+            Échéance: {{ formatDate(invoice.dueDate) }}
+          </span>
+          <span class="meta-item">
+            <i class="fas fa-user"></i>
+            Patient: {{ patient?.firstName }} {{ patient?.lastName }}
+          </span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-badge" [class]="getStatusClass(invoice.status)">
+          {{ getStatusText(invoice.status) }}
+        </div>
+        <div class="total-amount">
+          {{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations du patient -->
+    <div class="patient-info" *ngIf="patient">
+      <h3>Informations du patient</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Nom complet:</label>
+          <span>{{ patient.firstName }} {{ patient.lastName }}</span>
+        </div>
+        <div class="info-item">
+          <label>Email:</label>
+          <span>{{ patient.email }}</span>
+        </div>
+        <div class="info-item">
+          <label>Téléphone:</label>
+          <span>{{ patient.phone }}</span>
+        </div>
+        <div class="info-item">
+          <label>Date de naissance:</label>
+          <span>{{ formatDate(patient.dateOfBirth) }}</span>
+        </div>
+        <div class="info-item">
+          <label>Adresse:</label>
+          <span>{{ patient.address }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lignes de facture -->
+    <div class="invoice-lines">
+      <h3>Détails de la facture</h3>
+      <div class="lines-table">
+        <div class="table-header">
+          <div class="col description">Description</div>
+          <div class="col quantity">Quantité</div>
+          <div class="col price">Prix unitaire</div>
+          <div class="col total">Total</div>
+        </div>
+        <div class="table-row" *ngFor="let item of invoice.items">
+          <div class="col description">{{ item.description }}</div>
+          <div class="col quantity">{{ item.quantity }}</div>
+          <div class="col price">{{ item.unitPrice | currency:'EUR':'symbol':'1.2-2' }}</div>
+          <div class="col total">{{ item.total | currency:'EUR':'symbol':'1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="invoice-notes" *ngIf="invoice.notes">
+      <h3>Notes</h3>
+      <div class="notes-content">
+        {{ invoice.notes }}
+      </div>
+    </div>
+
+    <!-- Résumé -->
+    <div class="invoice-summary">
+      <div class="summary-row">
+        <span class="summary-label">Total HT:</span>
+        <span class="summary-value">{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">TVA (20%):</span>
+        <span class="summary-value">{{ invoice.total * 0.2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="summary-row total">
+        <span class="summary-label">Total TTC:</span>
+        <span class="summary-value">{{ invoice.total * 1.2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="invoice-actions">
+      <div class="action-group">
+        <button (click)="onEdit()" class="btn btn-primary">
+          <i class="fas fa-edit"></i>
+          Modifier
+        </button>
+        <button (click)="onDownloadPDF()" class="btn btn-secondary">
+          <i class="fas fa-download"></i>
+          Télécharger PDF
+        </button>
+        <button (click)="onSendEmail()" class="btn btn-info">
+          <i class="fas fa-envelope"></i>
+          Envoyer par email
+        </button>
+      </div>
+      
+      <div class="action-group">
+        <button 
+          (click)="onMarkAsPaid()" 
+          class="btn btn-success"
+          *ngIf="invoice.status !== 'PAID'">
+          <i class="fas fa-check"></i>
+          Marquer comme payée
+        </button>
+        <button (click)="onDelete()" class="btn btn-danger">
+          <i class="fas fa-trash"></i>
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <!-- Retour -->
+    <div class="back-link">
+      <a routerLink="/invoices" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i>
+        Retour à la liste
+      </a>
+    </div>
+  </div>
+</div>

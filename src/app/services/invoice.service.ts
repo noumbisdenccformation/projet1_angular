@@ -35,6 +35,7 @@ export class InvoiceService {
       discount: 0,
       total: 150,
       status: InvoiceStatus.PAID,
+      issueDate: new Date('2024-01-15'),
       dueDate: new Date('2024-01-20'),
       paidDate: new Date('2024-01-18'),
       notes: 'Paiement par carte bancaire',
@@ -75,6 +76,7 @@ export class InvoiceService {
       discount: 10,
       total: 170,
       status: InvoiceStatus.PENDING,
+      issueDate: new Date('2024-01-15'),
       dueDate: new Date('2024-02-15'),
       notes: 'Remboursement mutuelle possible',
       createdAt: new Date('2024-01-15'),
@@ -107,6 +109,7 @@ export class InvoiceService {
       discount: 0,
       total: 234,
       status: InvoiceStatus.OVERDUE,
+      issueDate: new Date('2024-01-05'),
       dueDate: new Date('2024-01-10'),
       notes: 'Relance envoyée le 15/01',
       createdAt: new Date('2024-01-05'),
@@ -178,6 +181,7 @@ export class InvoiceService {
       discount: invoiceData.discount,
       total,
       status: InvoiceStatus.PENDING,
+      issueDate: new Date(),
       dueDate: this.calculateDueDate(),
       notes: invoiceData.notes,
       createdAt: new Date(),
@@ -328,5 +332,18 @@ export class InvoiceService {
   sendByEmail(invoiceId: number, email: string): Observable<boolean> {
     // Simulation d'envoi email
     return of(true).pipe(delay(500));
+  }
+
+  // Envoyer une facture par email
+  sendInvoiceByEmail(invoiceId: number): Observable<boolean> {
+    // Simulation d'envoi par email
+    return of(true).pipe(delay(1000));
+  }
+
+  // Télécharger une facture en PDF
+  downloadInvoicePDF(invoiceId: number): Observable<Blob> {
+    // Simulation de génération PDF
+    const blob = new Blob(['PDF content'], { type: 'application/pdf' });
+    return of(blob).pipe(delay(1000));
   }
 } 
