@@ -1,0 +1,125 @@
+<div class="calendar-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1>Calendrier des Rendez-vous</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" routerLink="/appointments/new">
+        <mat-icon>add</mat-icon>
+        Nouveau Rendez-vous
+      </button>
+    </div>
+  </div>
+
+  <!-- Contrôles du calendrier -->
+  <mat-card class="controls-card">
+    <mat-card-content>
+      <div class="calendar-controls">
+        <!-- Filtre par médecin -->
+        <mat-form-field appearance="outline" *ngIf="!authService.isDoctor()">
+          <mat-label>Filtrer par médecin</mat-label>
+          <mat-select [(ngModel)]="selectedDoctor" (selectionChange)="onDoctorChange()">
+            <mat-option [value]="null">Tous les médecins</mat-option>
+            <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+              {{ doctor.name }} - {{ doctor.specialty }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Sélection de vue -->
+        <mat-form-field appearance="outline">
+          <mat-label>Vue</mat-label>
+          <mat-select [(ngModel)]="selectedView" (selectionChange)="onViewChange()">
+            <mat-option value="timeGridWeek">Semaine</mat-option>
+            <mat-option value="timeGridDay">Jour</mat-option>
+            <mat-option value="dayGridMonth">Mois</mat-option>
+            <mat-option value="listWeek">Liste</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Navigation rapide -->
+        <div class="navigation-buttons">
+          <button mat-icon-button (click)="goToPrev()" matTooltip="Précédent">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-button (click)="goToToday()" matTooltip="Aujourd'hui">
+            Aujourd'hui
+          </button>
+          <button mat-icon-button (click)="goToNext()" matTooltip="Suivant">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Légende des statuts -->
+  <mat-card class="legend-card">
+    <mat-card-content>
+      <div class="legend">
+        <h3>Légende des statuts</h3>
+        <div class="legend-items">
+          <div class="legend-item">
+            <div class="legend-color confirmed"></div>
+            <span>Confirmé</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color scheduled"></div>
+            <span>Programmé</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color in-progress"></div>
+            <span>En cours</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color completed"></div>
+            <span>Terminé</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color cancelled"></div>
+            <span>Annulé</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color no-show"></div>
+            <span>Absent</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Calendrier FullCalendar -->
+  <mat-card class="calendar-card">
+    <mat-card-content>
+      <div class="calendar-wrapper">
+        <!-- Indicateur de chargement -->
+        <div *ngIf="loading" class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>Chargement du calendrier...</p>
+        </div>
+
+        <!-- Calendrier -->
+        <full-calendar 
+          #calendar
+          [options]="calendarOptions"
+          class="full-calendar">
+        </full-calendar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Instructions -->
+  <mat-card class="instructions-card">
+    <mat-card-content>
+      <div class="instructions">
+        <h3>Instructions d'utilisation</h3>
+        <ul>
+          <li><strong>Cliquer sur un créneau vide</strong> : Créer un nouveau rendez-vous</li>
+          <li><strong>Cliquer sur un rendez-vous</strong> : Voir/modifier les détails</li>
+          <li><strong>Glisser-déposer</strong> : Déplacer un rendez-vous</li>
+          <li><strong>Redimensionner</strong> : Modifier la durée d'un rendez-vous</li>
+          <li><strong>Double-clic</strong> : Accéder rapidement aux détails</li>
+        </ul>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

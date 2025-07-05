@@ -1,0 +1,167 @@
+<div class="prescription-list-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Gestion des Prescriptions</h1>
+    <button *ngIf="canCreate" class="btn btn-primary" (click)="createPrescription()">
+      <i class="fas fa-plus"></i> Nouvelle Prescription
+    </button>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Rechercher par patient, médecin, diagnostic..." 
+        [value]="searchTerm"
+        (input)="onSearchChange($event)"
+        class="form-control"
+      >
+    </div>
+
+    <div class="filters">
+      <select [(ngModel)]="statusFilter" (change)="onStatusFilterChange()" class="form-select">
+        <option value="all">Tous les statuts</option>
+        <option value="active">Actives</option>
+        <option value="inactive">Inactives</option>
+      </select>
+
+      <select [(ngModel)]="sortBy" (change)="onSortChange()" class="form-select">
+        <option value="date">Trier par date</option>
+        <option value="patient">Trier par patient</option>
+        <option value="doctor">Trier par médecin</option>
+        <option value="diagnosis">Trier par diagnostic</option>
+        <option value="medications">Trier par nombre de médicaments</option>
+      </select>
+
+      <button (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'; onSortChange()" class="btn btn-outline-secondary">
+        <i class="fas" [class.fa-sort-up]="sortOrder === 'asc'" [class.fa-sort-down]="sortOrder === 'desc'"></i>
+      </button>
+
+      <button (click)="clearFilters()" class="btn btn-outline-secondary">
+        <i class="fas fa-times"></i> Effacer
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'erreur -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Tableau des prescriptions -->
+  <div *ngIf="!loading && paginatedPrescriptions.length > 0" class="table-container">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Médecin</th>
+          <th>Date</th>
+          <th>Diagnostic</th>
+          <th>Médicaments</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prescription of paginatedPrescriptions">
+          <td>
+            <div class="patient-info">
+              <strong>{{ prescription.patientName }}</strong>
+            </div>
+          </td>
+          <td>{{ prescription.doctorName }}</td>
+          <td>{{ formatDate(prescription.prescriptionDate) }}</td>
+          <td>
+            <div class="diagnosis-cell">
+              <span class="diagnosis-text">{{ prescription.diagnosis }}</span>
+              <span *ngIf="prescription.notes" class="notes-tooltip" [title]="prescription.notes">
+                <i class="fas fa-info-circle"></i>
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="medications-summary">{{ getMedicationSummary(prescription.medications) }}</span>
+          </td>
+          <td>
+            <span class="badge" [class]="getStatusBadgeClass(prescription.isActive)">
+              {{ getStatusText(prescription.isActive) }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <button (click)="viewPrescription(prescription)" class="btn btn-sm btn-outline-primary" title="Voir">
+                <i class="fas fa-eye"></i>
+              </button>
+              
+              <button *ngIf="canEdit" (click)="editPrescription(prescription)" class="btn btn-sm btn-outline-warning" title="Modifier">
+                <i class="fas fa-edit"></i>
+              </button>
+              
+              <button *ngIf="canDelete" (click)="deletePrescription(prescription)" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                <i class="fas fa-trash"></i>
+              </button>
+              
+              <button *ngIf="canEdit" (click)="togglePrescriptionStatus(prescription)" 
+                      [class]="prescription.isActive ? 'btn btn-sm btn-outline-warning' : 'btn btn-sm btn-outline-success'"
+                      [title]="prescription.isActive ? 'Désactiver' : 'Réactiver'">
+                <i class="fas" [class.fa-pause]="prescription.isActive" [class.fa-play]="!prescription.isActive"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Message si aucune prescription -->
+  <div *ngIf="!loading && paginatedPrescriptions.length === 0" class="no-data">
+    <div class="no-data-content">
+      <i class="fas fa-prescription-bottle fa-3x text-muted"></i>
+      <h3>Aucune prescription trouvée</h3>
+      <p *ngIf="searchTerm || statusFilter !== 'all'">
+        Aucune prescription ne correspond à vos critères de recherche.
+        <button (click)="clearFilters()" class="btn btn-link">Effacer les filtres</button>
+      </p>
+      <p *ngIf="!searchTerm && statusFilter === 'all'">
+        Aucune prescription n'a encore été créée.
+        <button *ngIf="canCreate" (click)="createPrescription()" class="btn btn-primary">Créer la première prescription</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination-container">
+    <nav aria-label="Navigation des pages">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </li>
+        
+        <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === currentPage">
+          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+        
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="pagination-info">
+      Page {{ currentPage }} sur {{ totalPages }} 
+      ({{ filteredPrescriptions.length }} prescription{{ filteredPrescriptions.length > 1 ? 's' : '' }})
+    </div>
+  </div>
+</div> 

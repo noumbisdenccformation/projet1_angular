@@ -242,7 +242,11 @@ export class AppointmentFormComponent implements OnInit {
 
   private updateAppointment(formData: AppointmentFormData): void {
     if (this.appointmentId) {
-      this.appointmentService.updateAppointment(this.appointmentId, formData).subscribe({
+      const updates = {
+        ...formData,
+        date: new Date(formData.date)
+      };
+      this.appointmentService.updateAppointment(this.appointmentId, updates).subscribe({
         next: () => {
           this.snackBar.open('Rendez-vous mis à jour avec succès', 'Fermer', { duration: 3000 });
           this.router.navigate(['/appointments']);

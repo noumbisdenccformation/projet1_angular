@@ -153,7 +153,7 @@ export class AppointmentListComponent implements OnInit {
 
     // Filtre par médecin (si l'utilisateur est un médecin)
     if (this.authService.isDoctor() && this.authService.currentUser) {
-      filtered = filtered.filter(appointment => appointment.doctorId === this.authService.currentUser.id);
+      filtered = filtered.filter(appointment => appointment.doctorId === this.authService.currentUser!.id);
     }
 
     // Appliquer le tri

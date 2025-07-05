@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, switchMap } from 'rxjs/operators';
 import { Appointment, AppointmentStatus, AppointmentType, AppointmentFormData, AppointmentConflict } from '../models/appointment.model';
 
 @Injectable({
@@ -96,25 +96,34 @@ export class AppointmentService {
 
   // Créer un nouveau rendez-vous
   createAppointment(appointmentData: AppointmentFormData): Observable<Appointment> {
-    // Vérifier les conflits avant de créer
-    const conflict = this.checkConflicts(appointmentData);
-    if (conflict.hasConflict) {
-      return throwError(() => new Error(conflict.message || 'Conflit de rendez-vous détecté'));
-    }
+    return this.checkConflicts(appointmentData).pipe(
+      switchMap(conflict => {
+        if (conflict.hasConflict) {
+          return throwError(() => new Error(conflict.message || 'Conflit de rendez-vous détecté'));
+        }
+        
+        const newAppointment: Appointment = {
+          id: this.getNextId(),
+          patientId: appointmentData.patientId,
+          doctorId: appointmentData.doctorId,
+          patientName: 'Patient à récupérer',
+          doctorName: 'Médecin à récupérer',
+          date: new Date(appointmentData.date),
+          startTime: appointmentData.startTime,
+          endTime: appointmentData.endTime,
+          duration: this.calculateDuration(appointmentData.startTime, appointmentData.endTime),
+          type: appointmentData.type,
+          status: AppointmentStatus.SCHEDULED,
+          room: appointmentData.room,
+          notes: appointmentData.notes,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
 
-    const newAppointment: Appointment = {
-      id: this.getNextId(),
-      ...appointmentData,
-      patientName: 'Patient à récupérer', // Sera mis à jour avec les vraies données
-      doctorName: 'Médecin à récupérer', // Sera mis à jour avec les vraies données
-      status: AppointmentStatus.SCHEDULED,
-      duration: this.calculateDuration(appointmentData.startTime, appointmentData.endTime),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    this.appointments.push(newAppointment);
-    return of(newAppointment).pipe(delay(500));
+        this.appointments.push(newAppointment);
+        return of(newAppointment);
+      })
+    );
   }
 
   // Mettre à jour un rendez-vous
@@ -126,14 +135,33 @@ export class AppointmentService {
 
     // Vérifier les conflits si la date/heure change
     if (updates.date || updates.startTime || updates.endTime) {
-      const conflict = this.checkConflicts({
-        ...this.appointments[index],
-        ...updates
-      } as AppointmentFormData, id);
+      const appointment = this.appointments[index];
+      const formData: AppointmentFormData = {
+        patientId: appointment.patientId,
+        doctorId: appointment.doctorId,
+        date: updates.date ? updates.date.toISOString().split('T')[0] : appointment.date.toISOString().split('T')[0],
+        startTime: updates.startTime || appointment.startTime,
+        endTime: updates.endTime || appointment.endTime,
+        type: appointment.type,
+        room: appointment.room,
+        notes: appointment.notes
+      };
       
-      if (conflict.hasConflict) {
-        return throwError(() => new Error(conflict.message || 'Conflit de rendez-vous détecté'));
-      }
+      return this.checkConflicts(formData, id).pipe(
+        switchMap(conflict => {
+          if (conflict.hasConflict) {
+            return throwError(() => new Error(conflict.message || 'Conflit de rendez-vous détecté'));
+          }
+          
+          this.appointments[index] = {
+            ...this.appointments[index],
+            ...updates,
+            updatedAt: new Date()
+          };
+
+          return of(this.appointments[index]);
+        })
+      );
     }
 
     this.appointments[index] = {
@@ -168,7 +196,7 @@ export class AppointmentService {
   }
 
   // Vérifier les conflits de rendez-vous
-  checkConflicts(appointmentData: AppointmentFormData, excludeId?: number): AppointmentConflict {
+  checkConflicts(appointmentData: AppointmentFormData, excludeId?: number): Observable<AppointmentConflict> {
     const { doctorId, date, startTime, endTime } = appointmentData;
     
     // Récupérer tous les rendez-vous du médecin pour cette date
@@ -186,18 +214,16 @@ export class AppointmentService {
       );
     });
 
-    if (conflicts.length > 0) {
-      return {
-        hasConflict: true,
-        conflictingAppointments: conflicts,
-        message: `Conflit détecté avec ${conflicts.length} rendez-vous existant(s)`
-      };
-    }
-
-    return {
+    const result: AppointmentConflict = conflicts.length > 0 ? {
+      hasConflict: true,
+      conflictingAppointments: conflicts,
+      message: `Conflit détecté avec ${conflicts.length} rendez-vous existant(s)`
+    } : {
       hasConflict: false,
       conflictingAppointments: []
     };
+
+    return of(result).pipe(delay(300));
   }
 
   // Vérifier si un patient a déjà un rendez-vous le même jour

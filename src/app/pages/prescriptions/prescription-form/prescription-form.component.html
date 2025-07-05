@@ -1,0 +1,299 @@
+<div class="prescription-form-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>{{ isEditMode ? 'Modifier la Prescription' : 'Nouvelle Prescription' }}</h1>
+    <button class="btn btn-outline-secondary" (click)="cancel()">
+      <i class="fas fa-arrow-left"></i> Retour
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="alert alert-success">
+    {{ success }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <form *ngIf="!loading" [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()" class="prescription-form">
+    
+    <!-- Informations générales -->
+    <div class="form-section">
+      <h3>Informations Générales</h3>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="appointmentId">Rendez-vous *</label>
+            <select 
+              id="appointmentId" 
+              formControlName="appointmentId" 
+              class="form-control"
+              (change)="onAppointmentChange()"
+              [class.is-invalid]="isFieldInvalid('appointmentId')">
+              <option value="">Sélectionner un rendez-vous</option>
+              <option *ngFor="let appointment of appointments" [value]="appointment.id">
+                {{ getAppointmentInfo(appointment.id) }}
+              </option>
+            </select>
+            <div *ngIf="isFieldInvalid('appointmentId')" class="invalid-feedback">
+              {{ getFieldError('appointmentId') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="patientId">Patient *</label>
+            <select 
+              id="patientId" 
+              formControlName="patientId" 
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('patientId')">
+              <option value="">Sélectionner un patient</option>
+              <option *ngFor="let patient of patients" [value]="patient.id">
+                {{ patient.firstName }} {{ patient.lastName }}
+              </option>
+            </select>
+            <div *ngIf="isFieldInvalid('patientId')" class="invalid-feedback">
+              {{ getFieldError('patientId') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="doctorId">Médecin *</label>
+            <select 
+              id="doctorId" 
+              formControlName="doctorId" 
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('doctorId')">
+              <option value="">Sélectionner un médecin</option>
+              <option *ngFor="let doctor of doctors" [value]="doctor.id">
+                {{ doctor.name }} - {{ doctor.specialty }}
+              </option>
+            </select>
+            <div *ngIf="isFieldInvalid('doctorId')" class="invalid-feedback">
+              {{ getFieldError('doctorId') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="diagnosis">Diagnostic *</label>
+            <textarea 
+              id="diagnosis" 
+              formControlName="diagnosis" 
+              class="form-control"
+              rows="3"
+              placeholder="Décrivez le diagnostic..."
+              [class.is-invalid]="isFieldInvalid('diagnosis')"></textarea>
+            <div *ngIf="isFieldInvalid('diagnosis')" class="invalid-feedback">
+              {{ getFieldError('diagnosis') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="notes">Notes (optionnel)</label>
+            <textarea 
+              id="notes" 
+              formControlName="notes" 
+              class="form-control"
+              rows="2"
+              placeholder="Notes supplémentaires..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Médicaments -->
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Médicaments</h3>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="addMedication()">
+          <i class="fas fa-plus"></i> Ajouter un médicament
+        </button>
+      </div>
+
+      <div formArrayName="medications" class="medications-container">
+        <div *ngFor="let medication of medicationsArray.controls; let i = index" 
+             [formGroupName]="i" 
+             class="medication-card">
+          
+          <div class="medication-header">
+            <h4>Médicament {{ i + 1 }}</h4>
+            <button *ngIf="medicationsArray.length > 1" 
+                    type="button" 
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="removeMedication(i)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Nom du médicament *</label>
+                <input 
+                  type="text" 
+                  formControlName="name" 
+                  class="form-control"
+                  placeholder="Nom du médicament"
+                  [class.is-invalid]="isMedicationFieldInvalid(i, 'name')">
+                <div *ngIf="isMedicationFieldInvalid(i, 'name')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'name') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Dosage *</label>
+                <input 
+                  type="text" 
+                  formControlName="dosage" 
+                  class="form-control"
+                  placeholder="ex: 500mg"
+                  [class.is-invalid]="isMedicationFieldInvalid(i, 'dosage')">
+                <div *ngIf="isMedicationFieldInvalid(i, 'dosage')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'dosage') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Fréquence *</label>
+                <input 
+                  type="text" 
+                  formControlName="frequency" 
+                  class="form-control"
+                  placeholder="ex: 2 fois par jour"
+                  [class.is-invalid]="isMedicationFieldInvalid(i, 'frequency')">
+                <div *ngIf="isMedicationFieldInvalid(i, 'frequency')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'frequency') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Durée *</label>
+                <input 
+                  type="text" 
+                  formControlName="duration" 
+                  class="form-control"
+                  placeholder="ex: 7 jours"
+                  [class.is-invalid]="isMedicationFieldInvalid(i, 'duration')">
+                <div *ngIf="isMedicationFieldInvalid(i, 'duration')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'duration') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Quantité *</label>
+                <div class="input-group">
+                  <input 
+                    type="number" 
+                    formControlName="quantity" 
+                    class="form-control"
+                    min="1"
+                    [class.is-invalid]="isMedicationFieldInvalid(i, 'quantity')">
+                  <select formControlName="unit" class="form-select">
+                    <option value="comprimés">comprimés</option>
+                    <option value="gélules">gélules</option>
+                    <option value="ampoules">ampoules</option>
+                    <option value="flacons">flacons</option>
+                    <option value="tubes">tubes</option>
+                  </select>
+                </div>
+                <div *ngIf="isMedicationFieldInvalid(i, 'quantity')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'quantity') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>Instructions *</label>
+                <textarea 
+                  formControlName="instructions" 
+                  class="form-control"
+                  rows="2"
+                  placeholder="Instructions de prise..."
+                  [class.is-invalid]="isMedicationFieldInvalid(i, 'instructions')"></textarea>
+                <div *ngIf="isMedicationFieldInvalid(i, 'instructions')" class="invalid-feedback">
+                  {{ getMedicationFieldError(i, 'instructions') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vérification des interactions -->
+      <div class="interactions-section">
+        <button type="button" 
+                class="btn btn-outline-info"
+                (click)="checkDrugInteractions()"
+                [disabled]="checkingInteractions || medicationsArray.length === 0">
+          <i class="fas fa-search"></i>
+          {{ checkingInteractions ? 'Vérification...' : 'Vérifier les interactions' }}
+        </button>
+
+        <div *ngIf="hasInteractions" class="interactions-warning">
+          <div class="alert alert-warning">
+            <h5><i class="fas fa-exclamation-triangle"></i> Interactions détectées</h5>
+            <ul>
+              <li *ngFor="let interaction of interactions">{{ interaction }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div *ngIf="!hasInteractions && interactions.length === 0 && !checkingInteractions" class="interactions-ok">
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Aucune interaction détectée
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+        Annuler
+      </button>
+      <button type="submit" 
+              class="btn btn-primary"
+              [disabled]="saving || prescriptionForm.invalid">
+        <i class="fas fa-save"></i>
+        {{ saving ? 'Sauvegarde...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
+      </button>
+    </div>
+  </form>
+</div> 

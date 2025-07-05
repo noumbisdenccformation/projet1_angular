@@ -8,6 +8,10 @@ import { User, UserRole, LoginRequest, LoginResponse } from '../models/user.mode
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  
+  get currentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
 
   constructor() {
     this.loadUserFromStorage();

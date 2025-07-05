@@ -8,6 +8,9 @@ import { PatientListComponent } from './pages/patients/patient-list/patient-list
 import { PatientFormComponent } from './pages/patients/patient-form/patient-form.component';
 import { AppointmentListComponent } from './pages/appointments/appointment-list/appointment-list.component';
 import { AppointmentFormComponent } from './pages/appointments/appointment-form/appointment-form.component';
+import { CalendarComponent } from './pages/calendar/calendar/calendar.component';
+import { PrescriptionListComponent } from './pages/prescriptions/prescription-list/prescription-list.component';
+import { PrescriptionFormComponent } from './pages/prescriptions/prescription-form/prescription-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -72,43 +75,39 @@ export const routes: Routes = [
     ]
   },
   
-  // Routes pour le calendrier (à implémenter)
-  /*
+  // Routes pour le calendrier
   {
     path: 'calendar',
-    component: () => import('./pages/calendar/calendar.component').then(m => m.CalendarComponent),
+    component: CalendarComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: [UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY] }
   },
-  */
   
-  // Routes pour les prescriptions (à implémenter)
-  /*
+  // Routes pour les prescriptions
   {
     path: 'prescriptions',
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        component: () => import('./pages/prescriptions/prescription-list/prescription-list.component').then(m => m.PrescriptionListComponent),
+        component: PrescriptionListComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.DOCTOR] }
       },
       {
         path: 'new',
-        component: () => import('./pages/prescriptions/prescription-form/prescription-form.component').then(m => m.PrescriptionFormComponent),
+        component: PrescriptionFormComponent,
         canActivate: [roleGuard],
-        data: { roles: [UserRole.DOCTOR] }
+        data: { roles: [UserRole.ADMIN, UserRole.DOCTOR] }
       },
       {
-        path: ':id',
-        component: () => import('./pages/prescriptions/prescription-detail/prescription-detail.component').then(m => m.PrescriptionDetailComponent),
+        path: ':id/edit',
+        component: PrescriptionFormComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.DOCTOR] }
       }
     ]
   },
-  */
   
   // Routes pour les factures (à implémenter)
   /*

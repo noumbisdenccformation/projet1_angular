@@ -1,0 +1,308 @@
+.calendar-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* En-tête */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  height: auto;
+}
+
+/* Carte des contrôles */
+.controls-card {
+  margin-bottom: 20px;
+}
+
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.calendar-controls mat-form-field {
+  min-width: 200px;
+}
+
+.navigation-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navigation-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Carte de la légende */
+.legend-card {
+  margin-bottom: 20px;
+}
+
+.legend h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.legend-color.confirmed {
+  background-color: #4caf50;
+}
+
+.legend-color.scheduled {
+  background-color: #2196f3;
+}
+
+.legend-color.in-progress {
+  background-color: #ff9800;
+}
+
+.legend-color.completed {
+  background-color: #9c27b0;
+}
+
+.legend-color.cancelled {
+  background-color: #f44336;
+}
+
+.legend-color.no-show {
+  background-color: #795548;
+}
+
+/* Carte du calendrier */
+.calendar-card {
+  margin-bottom: 20px;
+}
+
+.calendar-wrapper {
+  position: relative;
+  min-height: 600px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-overlay p {
+  margin-top: 16px;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* FullCalendar personnalisation */
+.full-calendar {
+  width: 100%;
+}
+
+/* Personnalisation des événements FullCalendar */
+:host ::ng-deep .fc-event {
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+:host ::ng-deep .fc-event:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .fc-event-main {
+  padding: 2px 4px;
+}
+
+:host ::ng-deep .fc-timegrid-event {
+  border-radius: 4px;
+}
+
+:host ::ng-deep .fc-daygrid-event {
+  border-radius: 4px;
+}
+
+/* Personnalisation de la barre d'outils */
+:host ::ng-deep .fc-toolbar {
+  margin-bottom: 16px;
+}
+
+:host ::ng-deep .fc-toolbar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+:host ::ng-deep .fc-button {
+  background-color: #2196f3;
+  border-color: #2196f3;
+  color: white;
+  font-weight: 500;
+  text-transform: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .fc-button:hover {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+:host ::ng-deep .fc-button:focus {
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+}
+
+:host ::ng-deep .fc-button-active {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+/* Personnalisation des cellules */
+:host ::ng-deep .fc-timegrid-slot {
+  height: 40px;
+}
+
+:host ::ng-deep .fc-timegrid-slot-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+:host ::ng-deep .fc-col-header-cell {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Carte des instructions */
+.instructions-card {
+  margin-bottom: 20px;
+}
+
+.instructions h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #666;
+}
+
+.instructions li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.instructions strong {
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 16px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .calendar-controls {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .calendar-controls mat-form-field {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .navigation-buttons {
+    justify-content: center;
+  }
+  
+  .legend-items {
+    justify-content: center;
+  }
+  
+  .calendar-wrapper {
+    min-height: 500px;
+  }
+  
+  /* Masquer certaines fonctionnalités sur mobile */
+  :host ::ng-deep .fc-toolbar-chunk:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .legend-items {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .legend-item {
+    justify-content: center;
+  }
+}
