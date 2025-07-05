@@ -1,0 +1,272 @@
+.patient-list-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* En-tête */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.header-content h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.header-content p {
+  color: #666;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.header-actions {
+  flex-shrink: 0;
+}
+
+/* Carte de recherche */
+.search-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-section {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  flex: 1;
+  max-width: 400px;
+}
+
+.stats-section {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+/* Carte du tableau */
+.table-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.table-container {
+  position: relative;
+  min-height: 400px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mat-mdc-row:hover {
+  background-color: #f5f5f5;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  color: #333;
+  background-color: #fafafa;
+}
+
+.mat-mdc-cell {
+  padding: 12px 8px;
+}
+
+/* Colonnes spécifiques */
+.file-number {
+  font-weight: 600;
+  color: #1976d2;
+  font-family: 'Courier New', monospace;
+}
+
+.patient-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.first-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.last-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.age {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.phone {
+  font-weight: 500;
+  color: #333;
+}
+
+.email {
+  font-size: 0.8rem;
+  color: #666;
+  text-decoration: underline;
+}
+
+.doctor {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.no-doctor {
+  color: #f57c00;
+  font-style: italic;
+}
+
+.date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* États de chargement et vide */
+.loading-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-container p,
+.empty-container h3 {
+  margin: 16px 0 8px 0;
+  color: #666;
+}
+
+.empty-container p {
+  color: #888;
+  margin: 8px 0;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+/* Pagination */
+mat-paginator {
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .patient-list-container {
+    padding: 16px;
+  }
+  
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .header-actions {
+    align-self: flex-start;
+  }
+  
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-field {
+    max-width: none;
+  }
+  
+  .stats-section {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .mat-mdc-table {
+    font-size: 0.9rem;
+  }
+  
+  .mat-mdc-cell {
+    padding: 8px 4px;
+  }
+  
+  /* Masquer certaines colonnes sur mobile */
+  .mat-column-createdAt,
+  .mat-column-assignedDoctor {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .patient-list-container {
+    padding: 12px;
+  }
+  
+  .mat-mdc-table {
+    font-size: 0.8rem;
+  }
+  
+  /* Masquer plus de colonnes sur très petit écran */
+  .mat-column-phone {
+    display: none;
+  }
+}

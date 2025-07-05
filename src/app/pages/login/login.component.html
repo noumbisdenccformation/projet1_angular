@@ -1,0 +1,67 @@
+<div class="login-container">
+  <div class="login-card">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title class="login-title">
+          <mat-icon class="title-icon">local_hospital</mat-icon>
+          Clinique Médicale
+        </mat-card-title>
+        <mat-card-subtitle>Connexion à votre espace</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nom d'utilisateur</mat-label>
+            <input matInput formControlName="username" placeholder="Entrez votre nom d'utilisateur">
+            <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+              {{ getErrorMessage('username') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mot de passe</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" 
+                   formControlName="password" placeholder="Entrez votre mot de passe">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" 
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              {{ getErrorMessage('password') }}
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+              {{ getErrorMessage('password') }}
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" 
+                  class="login-button full-width" 
+                  [disabled]="loginForm.invalid || isLoading">
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+            <span *ngIf="!isLoading">Se connecter</span>
+          </button>
+        </form>
+
+        <!-- Boutons de test rapide -->
+        <div class="test-buttons">
+          <p class="test-label">Tests rapides :</p>
+          <div class="test-buttons-row">
+            <button mat-stroked-button color="primary" (click)="loginAsAdmin()" 
+                    [disabled]="isLoading" class="test-button">
+              Admin
+            </button>
+            <button mat-stroked-button color="accent" (click)="loginAsDoctor()" 
+                    [disabled]="isLoading" class="test-button">
+              Médecin
+            </button>
+            <button mat-stroked-button color="warn" (click)="loginAsSecretary()" 
+                    [disabled]="isLoading" class="test-button">
+              Secrétaire
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
