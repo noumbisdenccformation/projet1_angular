@@ -1,139 +1,188 @@
-<div class="appointment-form-container">
-  <!-- En-tête -->
-  <div class="header">
-    <h1>{{ isEditMode ? 'Modifier le Rendez-vous' : 'Nouveau Rendez-vous' }}</h1>
-  </div>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- En-tête -->
+    <div class="mb-6 fade-in">
+      <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+        <mat-icon class="mr-3 text-clinic-primary text-4xl">
+          {{ isEditMode ? 'edit_calendar' : 'event_available' }}
+        </mat-icon>
+        {{ isEditMode ? 'Modifier le rendez-vous' : 'Nouveau rendez-vous' }}
+      </h1>
+      <p class="text-gray-600 mt-1">
+        {{ isEditMode ? 'Modifiez les informations du rendez-vous' : 'Planifiez un nouveau rendez-vous' }}
+      </p>
+    </div>
 
-  <!-- Formulaire -->
-  <mat-card class="form-card">
-    <mat-card-content>
-      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="appointment-form">
+    <!-- Indicateur de chargement -->
+    <div *ngIf="loading" class="flex items-center justify-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+      <span class="ml-4 text-gray-600">Chargement...</span>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      
+      <!-- Informations principales -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">info</mat-icon>
+          Informations principales
+        </h2>
         
-        <!-- Informations du patient et médecin -->
-        <div class="form-row">
-          <mat-form-field appearance="outline">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Patient *</mat-label>
-            <mat-select formControlName="patientId" [disabled]="loading">
+            <mat-select formControlName="patientId">
               <mat-option *ngFor="let patient of patients" [value]="patient.id">
                 {{ getPatientDisplayName(patient) }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="appointmentForm.get('patientId')?.hasError('required')">
-              {{ getErrorMessage('patientId') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('patientId') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Médecin *</mat-label>
-            <mat-select formControlName="doctorId" [disabled]="loading">
+            <mat-select formControlName="doctorId">
               <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
                 {{ getDoctorDisplayName(doctor) }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="appointmentForm.get('doctorId')?.hasError('required')">
-              {{ getErrorMessage('doctorId') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Date et type -->
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Date *</mat-label>
-            <input matInput [matDatepicker]="datePicker" formControlName="date" [disabled]="loading">
-            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-            <mat-datepicker #datePicker></mat-datepicker>
-            <mat-error *ngIf="appointmentForm.get('date')?.hasError('required')">
-              {{ getErrorMessage('date') }}
-            </mat-error>
-            <mat-error *ngIf="appointmentForm.get('date')?.hasError('pastDate')">
-              {{ getErrorMessage('date') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('doctorId') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Type de rendez-vous *</mat-label>
-            <mat-select formControlName="type" [disabled]="loading">
+            <mat-select formControlName="type">
               <mat-option *ngFor="let type of typeOptions" [value]="type">
                 {{ getTypeDisplayName(type) }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="appointmentForm.get('type')?.hasError('required')">
-              {{ getErrorMessage('type') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Heures -->
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Heure de début *</mat-label>
-            <input matInput type="time" formControlName="startTime" [disabled]="loading">
-            <mat-error *ngIf="appointmentForm.get('startTime')?.hasError('required')">
-              {{ getErrorMessage('startTime') }}
-            </mat-error>
+            <mat-error>{{ getErrorMessage('type') }}</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Heure de fin *</mat-label>
-            <input matInput type="time" formControlName="endTime" [disabled]="loading">
-            <mat-error *ngIf="appointmentForm.get('endTime')?.hasError('required')">
-              {{ getErrorMessage('endTime') }}
-            </mat-error>
-            <mat-error *ngIf="appointmentForm.get('endTime')?.hasError('invalidTimeRange')">
-              {{ getErrorMessage('endTime') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Salle et notes -->
-        <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Salle *</mat-label>
-            <mat-select formControlName="room" [disabled]="loading">
+            <mat-select formControlName="room">
               <mat-option *ngFor="let room of rooms" [value]="room">
                 {{ room }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="appointmentForm.get('room')?.hasError('required')">
-              {{ getErrorMessage('room') }}
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Notes</mat-label>
-            <textarea matInput formControlName="notes" rows="3" 
-                      placeholder="Informations supplémentaires..." [disabled]="loading"></textarea>
+            <mat-error>{{ getErrorMessage('room') }}</mat-error>
           </mat-form-field>
         </div>
+      </div>
 
-        <!-- Message de conflit -->
-        <div *ngIf="hasConflict" class="conflict-warning">
-          <mat-icon>warning</mat-icon>
-          <span>{{ conflictMessage }}</span>
+      <!-- Date et horaires -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">schedule</mat-icon>
+          Date et horaires
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Date *</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error>{{ getErrorMessage('date') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Heure de début *</mat-label>
+            <input matInput type="time" formControlName="startTime">
+            <mat-error>{{ getErrorMessage('startTime') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Heure de fin *</mat-label>
+            <input matInput type="time" formControlName="endTime">
+            <mat-error>{{ getErrorMessage('endTime') }}</mat-error>
+          </mat-form-field>
         </div>
 
-        <!-- Actions -->
-        <div class="form-actions">
-          <button type="button" mat-button (click)="onCancel()" [disabled]="submitting">
-            <mat-icon>cancel</mat-icon>
-            Annuler
-          </button>
-          
-          <button type="submit" mat-raised-button color="primary" 
-                  [disabled]="appointmentForm.invalid || submitting || hasConflict">
-            <mat-icon *ngIf="!submitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-            <mat-spinner *ngIf="submitting" diameter="20"></mat-spinner>
-            {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
-          </button>
+        <!-- Alerte de conflit -->
+        <div *ngIf="hasConflict" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex items-center">
+            <mat-icon class="text-red-600 mr-2">warning</mat-icon>
+            <div>
+              <h3 class="text-red-800 font-medium">Conflit détecté</h3>
+              <p class="text-red-700 text-sm">{{ conflictMessage }}</p>
+            </div>
+          </div>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
 
-  <!-- Indicateur de chargement -->
-  <div *ngIf="loading" class="loading-overlay">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Chargement...</p>
+      <!-- Notes -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-clinic-primary">note</mat-icon>
+          Notes (optionnel)
+        </h2>
+        
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Notes du rendez-vous</mat-label>
+          <textarea matInput formControlName="notes" rows="4" 
+                    placeholder="Informations complémentaires, préparation nécessaire, etc."></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Résumé du rendez-vous -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6" *ngIf="appointmentForm.valid && !hasConflict">
+        <h2 class="text-xl font-semibold text-blue-800 mb-4 flex items-center">
+          <mat-icon class="mr-2 text-blue-600">preview</mat-icon>
+          Résumé du rendez-vous
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <span class="font-medium text-blue-700">Patient:</span>
+            <span class="ml-2 text-blue-900">
+              {{ patients.find(p => p.id == appointmentForm.get('patientId')?.value)?.firstName }}
+              {{ patients.find(p => p.id == appointmentForm.get('patientId')?.value)?.lastName }}
+            </span>
+          </div>
+          <div>
+            <span class="font-medium text-blue-700">Médecin:</span>
+            <span class="ml-2 text-blue-900">
+              {{ doctors.find(d => d.id == appointmentForm.get('doctorId')?.value)?.name }}
+            </span>
+          </div>
+          <div>
+            <span class="font-medium text-blue-700">Date:</span>
+            <span class="ml-2 text-blue-900">{{ appointmentForm.get('date')?.value | date:'fullDate':'fr' }}</span>
+          </div>
+          <div>
+            <span class="font-medium text-blue-700">Horaire:</span>
+            <span class="ml-2 text-blue-900">
+              {{ appointmentForm.get('startTime')?.value }} - {{ appointmentForm.get('endTime')?.value }}
+            </span>
+          </div>
+          <div>
+            <span class="font-medium text-blue-700">Type:</span>
+            <span class="ml-2 text-blue-900">{{ getTypeDisplayName(appointmentForm.get('type')?.value) }}</span>
+          </div>
+          <div>
+            <span class="font-medium text-blue-700">Salle:</span>
+            <span class="ml-2 text-blue-900">{{ appointmentForm.get('room')?.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="flex items-center justify-end space-x-4 bg-white rounded-lg shadow-md p-6">
+        <button type="button" mat-button (click)="onCancel()" [disabled]="submitting" 
+                class="clinic-button-secondary">
+          Annuler
+        </button>
+        <button type="submit" mat-raised-button color="primary" 
+                [disabled]="appointmentForm.invalid || hasConflict || submitting" 
+                class="clinic-button-primary">
+          <mat-spinner diameter="20" *ngIf="submitting" class="mr-2"></mat-spinner>
+          <mat-icon *ngIf="!submitting">{{ isEditMode ? 'save' : 'event_available' }}</mat-icon>
+          <span class="ml-2">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+        </button>
+      </div>
+    </form>
   </div>
 </div>

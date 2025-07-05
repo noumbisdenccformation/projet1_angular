@@ -1,167 +1,236 @@
-<div class="prescription-list-container">
-  <!-- Header -->
-  <div class="header">
-    <h1>Gestion des Prescriptions</h1>
-    <button *ngIf="canCreate" class="btn btn-primary" (click)="createPrescription()">
-      <i class="fas fa-plus"></i> Nouvelle Prescription
-    </button>
-  </div>
-
-  <!-- Filtres et recherche -->
-  <div class="filters-section">
-    <div class="search-box">
-      <input 
-        type="text" 
-        placeholder="Rechercher par patient, médecin, diagnostic..." 
-        [value]="searchTerm"
-        (input)="onSearchChange($event)"
-        class="form-control"
-      >
-    </div>
-
-    <div class="filters">
-      <select [(ngModel)]="statusFilter" (change)="onStatusFilterChange()" class="form-select">
-        <option value="all">Tous les statuts</option>
-        <option value="active">Actives</option>
-        <option value="inactive">Inactives</option>
-      </select>
-
-      <select [(ngModel)]="sortBy" (change)="onSortChange()" class="form-select">
-        <option value="date">Trier par date</option>
-        <option value="patient">Trier par patient</option>
-        <option value="doctor">Trier par médecin</option>
-        <option value="diagnosis">Trier par diagnostic</option>
-        <option value="medications">Trier par nombre de médicaments</option>
-      </select>
-
-      <button (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'; onSortChange()" class="btn btn-outline-secondary">
-        <i class="fas" [class.fa-sort-up]="sortOrder === 'asc'" [class.fa-sort-down]="sortOrder === 'desc'"></i>
-      </button>
-
-      <button (click)="clearFilters()" class="btn btn-outline-secondary">
-        <i class="fas fa-times"></i> Effacer
-      </button>
-    </div>
-  </div>
-
-  <!-- Messages d'erreur -->
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
-
-  <!-- Loading -->
-  <div *ngIf="loading" class="loading">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Chargement...</span>
-    </div>
-  </div>
-
-  <!-- Tableau des prescriptions -->
-  <div *ngIf="!loading && paginatedPrescriptions.length > 0" class="table-container">
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>Patient</th>
-          <th>Médecin</th>
-          <th>Date</th>
-          <th>Diagnostic</th>
-          <th>Médicaments</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let prescription of paginatedPrescriptions">
-          <td>
-            <div class="patient-info">
-              <strong>{{ prescription.patientName }}</strong>
-            </div>
-          </td>
-          <td>{{ prescription.doctorName }}</td>
-          <td>{{ formatDate(prescription.prescriptionDate) }}</td>
-          <td>
-            <div class="diagnosis-cell">
-              <span class="diagnosis-text">{{ prescription.diagnosis }}</span>
-              <span *ngIf="prescription.notes" class="notes-tooltip" [title]="prescription.notes">
-                <i class="fas fa-info-circle"></i>
-              </span>
-            </div>
-          </td>
-          <td>
-            <span class="medications-summary">{{ getMedicationSummary(prescription.medications) }}</span>
-          </td>
-          <td>
-            <span class="badge" [class]="getStatusBadgeClass(prescription.isActive)">
-              {{ getStatusText(prescription.isActive) }}
-            </span>
-          </td>
-          <td>
-            <div class="actions">
-              <button (click)="viewPrescription(prescription)" class="btn btn-sm btn-outline-primary" title="Voir">
-                <i class="fas fa-eye"></i>
-              </button>
-              
-              <button *ngIf="canEdit" (click)="editPrescription(prescription)" class="btn btn-sm btn-outline-warning" title="Modifier">
-                <i class="fas fa-edit"></i>
-              </button>
-              
-              <button *ngIf="canDelete" (click)="deletePrescription(prescription)" class="btn btn-sm btn-outline-danger" title="Supprimer">
-                <i class="fas fa-trash"></i>
-              </button>
-              
-              <button *ngIf="canEdit" (click)="togglePrescriptionStatus(prescription)" 
-                      [class]="prescription.isActive ? 'btn btn-sm btn-outline-warning' : 'btn btn-sm btn-outline-success'"
-                      [title]="prescription.isActive ? 'Désactiver' : 'Réactiver'">
-                <i class="fas" [class.fa-pause]="prescription.isActive" [class.fa-play]="!prescription.isActive"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Message si aucune prescription -->
-  <div *ngIf="!loading && paginatedPrescriptions.length === 0" class="no-data">
-    <div class="no-data-content">
-      <i class="fas fa-prescription-bottle fa-3x text-muted"></i>
-      <h3>Aucune prescription trouvée</h3>
-      <p *ngIf="searchTerm || statusFilter !== 'all'">
-        Aucune prescription ne correspond à vos critères de recherche.
-        <button (click)="clearFilters()" class="btn btn-link">Effacer les filtres</button>
-      </p>
-      <p *ngIf="!searchTerm && statusFilter === 'all'">
-        Aucune prescription n'a encore été créée.
-        <button *ngIf="canCreate" (click)="createPrescription()" class="btn btn-primary">Créer la première prescription</button>
-      </p>
-    </div>
-  </div>
-
-  <!-- Pagination -->
-  <div *ngIf="totalPages > 1" class="pagination-container">
-    <nav aria-label="Navigation des pages">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-        </li>
-        
-        <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === currentPage">
-          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
-        </li>
-        
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </li>
-      </ul>
-    </nav>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-7xl mx-auto">
     
-    <div class="pagination-info">
-      Page {{ currentPage }} sur {{ totalPages }} 
-      ({{ filteredPrescriptions.length }} prescription{{ filteredPrescriptions.length > 1 ? 's' : '' }})
+    <!-- En-tête -->
+    <div class="flex items-center justify-between mb-6 fade-in">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+          <mat-icon class="mr-3 text-clinic-primary text-4xl">medication</mat-icon>
+          Gestion des Prescriptions
+        </h1>
+        <p class="text-gray-600 mt-1">Liste des prescriptions médicales</p>
+      </div>
+      <button *ngIf="canCreate" 
+              class="clinic-button-primary flex items-center space-x-2"
+              (click)="createPrescription()">
+        <mat-icon>add</mat-icon>
+        <span>Nouvelle prescription</span>
+      </button>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        
+        <!-- Recherche -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+          <div class="relative">
+            <input type="text" 
+                   [value]="searchTerm"
+                   (input)="onSearchChange($event)"
+                   placeholder="Patient, médecin, diagnostic, médicament..."
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-clinic-primary focus:border-clinic-primary">
+            <mat-icon class="absolute left-3 top-2.5 text-gray-400">search</mat-icon>
+          </div>
+        </div>
+
+        <!-- Filtre par statut -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+          <select [(ngModel)]="statusFilter" 
+                  (change)="onStatusFilterChange()"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-clinic-primary focus:border-clinic-primary">
+            <option value="all">Toutes</option>
+            <option value="active">Actives</option>
+            <option value="inactive">Inactives</option>
+          </select>
+        </div>
+
+        <!-- Tri -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Trier par</label>
+          <div class="flex space-x-2">
+            <select [(ngModel)]="sortBy" 
+                    (change)="onSortChange()"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-clinic-primary focus:border-clinic-primary">
+              <option value="date">Date</option>
+              <option value="patient">Patient</option>
+              <option value="doctor">Médecin</option>
+              <option value="diagnosis">Diagnostic</option>
+            </select>
+            <button (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'; onSortChange()"
+                    class="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+              <mat-icon>{{ sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+        <div class="flex items-center space-x-6 text-sm text-gray-600">
+          <span><strong>Total:</strong> {{ prescriptions.length }}</span>
+          <span><strong>Affichées:</strong> {{ filteredPrescriptions.length }}</span>
+          <span><strong>Actives:</strong> {{ prescriptions.filter(p => p.isActive).length }}</span>
+        </div>
+        <button (click)="clearFilters()" 
+                class="text-sm text-clinic-primary hover:text-clinic-secondary">
+          Effacer les filtres
+        </button>
+      </div>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div *ngIf="loading" class="flex items-center justify-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+      <span class="ml-4 text-gray-600">Chargement des prescriptions...</span>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center">
+        <mat-icon class="text-red-600 mr-2">error</mat-icon>
+        <span class="text-red-800">{{ error }}</span>
+      </div>
+    </div>
+
+    <!-- Liste des prescriptions -->
+    <div *ngIf="!loading && !error" class="bg-white rounded-lg shadow-md overflow-hidden">
+      
+      <!-- État vide -->
+      <div *ngIf="filteredPrescriptions.length === 0" class="text-center py-12">
+        <mat-icon class="text-6xl text-gray-300 mb-4">medication</mat-icon>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune prescription trouvée</h3>
+        <p class="text-gray-600 mb-4" *ngIf="searchTerm || statusFilter !== 'all'">
+          Aucune prescription ne correspond à vos critères de recherche.
+        </p>
+        <p class="text-gray-600 mb-4" *ngIf="!searchTerm && statusFilter === 'all'">
+          Aucune prescription n'a encore été créée.
+        </p>
+        <button *ngIf="canCreate" 
+                class="clinic-button-primary"
+                (click)="createPrescription()">
+          <mat-icon>add</mat-icon>
+          Créer la première prescription
+        </button>
+      </div>
+
+      <!-- Tableau des prescriptions -->
+      <div *ngIf="filteredPrescriptions.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Médecin</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnostic</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Médicaments</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let prescription of paginatedPrescriptions" 
+                class="hover:bg-gray-50 transition-colors">
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {{ formatDate(prescription.prescriptionDate) }}
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ prescription.patientName }}</div>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ prescription.doctorName }}</div>
+              </td>
+              
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900 max-w-xs truncate" [title]="prescription.diagnosis">
+                  {{ prescription.diagnosis }}
+                </div>
+              </td>
+              
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900 max-w-xs truncate" 
+                     [title]="prescription.medications.map(m => m.name).join(', ')">
+                  {{ getMedicationSummary(prescription.medications) }}
+                </div>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                      [class]="prescription.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                  {{ getStatusText(prescription.isActive) }}
+                </span>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center space-x-2">
+                  <button (click)="viewPrescription(prescription)" 
+                          class="text-clinic-primary hover:text-clinic-secondary"
+                          title="Voir détails">
+                    <mat-icon class="text-lg">visibility</mat-icon>
+                  </button>
+                  
+                  <button *ngIf="canEdit" 
+                          (click)="editPrescription(prescription)" 
+                          class="text-green-600 hover:text-green-800"
+                          title="Modifier">
+                    <mat-icon class="text-lg">edit</mat-icon>
+                  </button>
+                  
+                  <button (click)="togglePrescriptionStatus(prescription)" 
+                          [class]="prescription.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-blue-600 hover:text-blue-800'"
+                          [title]="prescription.isActive ? 'Désactiver' : 'Réactiver'">
+                    <mat-icon class="text-lg">{{ prescription.isActive ? 'pause_circle' : 'play_circle' }}</mat-icon>
+                  </button>
+                  
+                  <button *ngIf="canDelete" 
+                          (click)="deletePrescription(prescription)" 
+                          class="text-red-600 hover:text-red-800"
+                          title="Supprimer">
+                    <mat-icon class="text-lg">delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="totalPages > 1" class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+        <div class="flex items-center text-sm text-gray-700">
+          <span>
+            Affichage {{ (currentPage - 1) * pageSize + 1 }} à 
+            {{ Math.min(currentPage * pageSize, filteredPrescriptions.length) }} 
+            sur {{ filteredPrescriptions.length }} prescriptions
+          </span>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <button (click)="previousPage()" 
+                  [disabled]="currentPage === 1"
+                  class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <mat-icon class="text-sm">chevron_left</mat-icon>
+          </button>
+          
+          <button *ngFor="let page of pageNumbers" 
+                  (click)="goToPage(page)"
+                  [class]="page === currentPage ? 'bg-clinic-primary text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                  class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium">
+            {{ page }}
+          </button>
+          
+          <button (click)="nextPage()" 
+                  [disabled]="currentPage === totalPages"
+                  class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <mat-icon class="text-sm">chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-</div> 
+</div>

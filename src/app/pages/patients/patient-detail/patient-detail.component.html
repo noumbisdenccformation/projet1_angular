@@ -1,1 +1,396 @@
-<p>patient-detail works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Indicateur de chargement -->
+    <div *ngIf="loading" class="flex items-center justify-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+      <span class="ml-4 text-gray-600">Chargement des données du patient...</span>
+    </div>
+
+    <!-- Contenu principal -->
+    <div *ngIf="!loading && patient">
+      
+      <!-- En-tête avec informations patient -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6 fade-in">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 bg-clinic-primary rounded-full flex items-center justify-center">
+              <mat-icon class="text-white text-3xl">person</mat-icon>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800">
+                {{ patient.firstName }} {{ patient.lastName }}
+              </h1>
+              <div class="flex items-center space-x-4 mt-2 text-gray-600">
+                <span class="flex items-center">
+                  <mat-icon class="text-sm mr-1">badge</mat-icon>
+                  {{ patient.fileNumber }}
+                </span>
+                <span class="flex items-center">
+                  <mat-icon class="text-sm mr-1">cake</mat-icon>
+                  {{ getAge() }} ans ({{ patient.dateOfBirth | date:'dd/MM/yyyy' }})
+                </span>
+                <span class="flex items-center">
+                  <mat-icon class="text-sm mr-1">wc</mat-icon>
+                  {{ getGenderDisplay() }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex space-x-2">
+            <button mat-raised-button color="primary" (click)="onEdit()" 
+                    *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])"
+                    class="clinic-button-primary">
+              <mat-icon>edit</mat-icon>
+              Modifier
+            </button>
+            <button mat-raised-button (click)="onNewAppointment()" 
+                    *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])"
+                    class="bg-green-600 hover:bg-green-700 text-white">
+              <mat-icon>event_available</mat-icon>
+              Nouveau RDV
+            </button>
+            <button mat-raised-button (click)="onNewPrescription()" 
+                    *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR])"
+                    class="bg-purple-600 hover:bg-purple-700 text-white">
+              <mat-icon>medication</mat-icon>
+              Prescription
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Onglets -->
+      <mat-tab-group class="bg-white rounded-lg shadow-md">
+        
+        <!-- Informations générales -->
+        <mat-tab label="Informations générales">
+          <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              <!-- Coordonnées -->
+              <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-clinic-primary">contact_phone</mat-icon>
+                  Coordonnées
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">phone</mat-icon>
+                    <span>{{ patient.phone }}</span>
+                  </div>
+                  <div class="flex items-center" *ngIf="patient.email">
+                    <mat-icon class="text-gray-500 mr-3">email</mat-icon>
+                    <span>{{ patient.email }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <mat-icon class="text-gray-500 mr-3 mt-1">location_on</mat-icon>
+                    <div>
+                      <div>{{ patient.address }}</div>
+                      <div>{{ patient.postalCode }} {{ patient.city }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact d'urgence -->
+              <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-red-600">emergency</mat-icon>
+                  Contact d'urgence
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">person</mat-icon>
+                    <span>{{ patient.emergencyContact.name }}</span>
+                  </div>
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">phone</mat-icon>
+                    <span>{{ patient.emergencyContact.phone }}</span>
+                  </div>
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">family_restroom</mat-icon>
+                    <span>{{ patient.emergencyContact.relationship }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assurance -->
+              <div class="bg-gray-50 rounded-lg p-4" *ngIf="patient.insuranceInfo">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-clinic-primary">security</mat-icon>
+                  Assurance
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">business</mat-icon>
+                    <span>{{ patient.insuranceInfo.provider }}</span>
+                  </div>
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">confirmation_number</mat-icon>
+                    <span>{{ patient.insuranceInfo.policyNumber }}</span>
+                  </div>
+                  <div class="flex items-center" *ngIf="patient.insuranceInfo.groupNumber">
+                    <mat-icon class="text-gray-500 mr-3">group</mat-icon>
+                    <span>{{ patient.insuranceInfo.groupNumber }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Antécédents médicaux -->
+        <mat-tab label="Antécédents médicaux">
+          <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              <!-- Allergies -->
+              <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-red-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-red-600">warning</mat-icon>
+                  Allergies
+                </h3>
+                <div *ngIf="patient.medicalHistory.allergies.length > 0; else noAllergies">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let allergy of patient.medicalHistory.allergies" 
+                             class="bg-red-100 text-red-800">
+                      {{ allergy }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+                <ng-template #noAllergies>
+                  <p class="text-red-600 italic">Aucune allergie connue</p>
+                </ng-template>
+              </div>
+
+              <!-- Maladies chroniques -->
+              <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-orange-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-orange-600">medical_services</mat-icon>
+                  Maladies chroniques
+                </h3>
+                <div *ngIf="patient.medicalHistory.chronicDiseases.length > 0; else noDiseases">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let disease of patient.medicalHistory.chronicDiseases" 
+                             class="bg-orange-100 text-orange-800">
+                      {{ disease }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+                <ng-template #noDiseases>
+                  <p class="text-orange-600 italic">Aucune maladie chronique</p>
+                </ng-template>
+              </div>
+
+              <!-- Chirurgies -->
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-blue-600">healing</mat-icon>
+                  Chirurgies
+                </h3>
+                <div *ngIf="patient.medicalHistory.surgeries.length > 0; else noSurgeries">
+                  <div class="space-y-2">
+                    <div *ngFor="let surgery of patient.medicalHistory.surgeries" 
+                         class="bg-blue-100 text-blue-800 px-3 py-2 rounded">
+                      {{ surgery }}
+                    </div>
+                  </div>
+                </div>
+                <ng-template #noSurgeries>
+                  <p class="text-blue-600 italic">Aucune chirurgie</p>
+                </ng-template>
+              </div>
+
+              <!-- Médicaments actuels -->
+              <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-green-800 mb-4 flex items-center">
+                  <mat-icon class="mr-2 text-green-600">medication</mat-icon>
+                  Médicaments actuels
+                </h3>
+                <div *ngIf="patient.medicalHistory.medications.length > 0; else noMedications">
+                  <div class="space-y-2">
+                    <div *ngFor="let medication of patient.medicalHistory.medications" 
+                         class="bg-green-100 text-green-800 px-3 py-2 rounded">
+                      {{ medication }}
+                    </div>
+                  </div>
+                </div>
+                <ng-template #noMedications>
+                  <p class="text-green-600 italic">Aucun médicament</p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Historique des rendez-vous -->
+        <mat-tab label="Rendez-vous">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">
+                Historique des rendez-vous ({{ appointments.length }})
+              </h3>
+              <button mat-raised-button color="primary" (click)="onNewAppointment()" 
+                      *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])"
+                      class="clinic-button-primary">
+                <mat-icon>add</mat-icon>
+                Nouveau RDV
+              </button>
+            </div>
+
+            <div *ngIf="appointments.length > 0; else noAppointments" class="overflow-x-auto">
+              <table mat-table [dataSource]="appointments" class="w-full">
+                
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Date</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    {{ formatDate(appointment.date) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="time">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Heure</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    {{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="doctor">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Médecin</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    {{ appointment.doctorName }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Type</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    {{ getTypeDisplay(appointment.type) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Statut</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    <span class="px-2 py-1 rounded-full text-xs font-medium" 
+                          [class]="getStatusClass(appointment.status)">
+                      {{ getStatusDisplay(appointment.status) }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Actions</th>
+                  <td mat-cell *matCellDef="let appointment">
+                    <button mat-icon-button (click)="onViewAppointment(appointment.id)" 
+                            matTooltip="Voir détails">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="appointmentColumns" class="bg-gray-50"></tr>
+                <tr mat-row *matRowDef="let row; columns: appointmentColumns;" 
+                    class="hover:bg-gray-50 cursor-pointer"></tr>
+              </table>
+            </div>
+
+            <ng-template #noAppointments>
+              <div class="text-center py-8">
+                <mat-icon class="text-6xl text-gray-300 mb-4">event_busy</mat-icon>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun rendez-vous</h3>
+                <p class="text-gray-600 mb-4">Ce patient n'a pas encore de rendez-vous programmé.</p>
+                <button mat-raised-button color="primary" (click)="onNewAppointment()" 
+                        *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY])"
+                        class="clinic-button-primary">
+                  <mat-icon>add</mat-icon>
+                  Programmer un rendez-vous
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </mat-tab>
+
+        <!-- Prescriptions -->
+        <mat-tab label="Prescriptions">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">
+                Historique des prescriptions ({{ prescriptions.length }})
+              </h3>
+              <button mat-raised-button color="primary" (click)="onNewPrescription()" 
+                      *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR])"
+                      class="bg-purple-600 hover:bg-purple-700 text-white">
+                <mat-icon>add</mat-icon>
+                Nouvelle prescription
+              </button>
+            </div>
+
+            <div *ngIf="prescriptions.length > 0; else noPrescriptions" class="overflow-x-auto">
+              <table mat-table [dataSource]="prescriptions" class="w-full">
+                
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Date</th>
+                  <td mat-cell *matCellDef="let prescription">
+                    {{ formatDate(prescription.prescriptionDate) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="doctor">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Médecin</th>
+                  <td mat-cell *matCellDef="let prescription">
+                    {{ prescription.doctorName }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="diagnosis">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Diagnostic</th>
+                  <td mat-cell *matCellDef="let prescription">
+                    {{ prescription.diagnosis }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="medications">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Médicaments</th>
+                  <td mat-cell *matCellDef="let prescription">
+                    {{ getMedicationsSummary(prescription) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold">Actions</th>
+                  <td mat-cell *matCellDef="let prescription">
+                    <button mat-icon-button (click)="onViewPrescription(prescription.id)" 
+                            matTooltip="Voir détails">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="prescriptionColumns" class="bg-gray-50"></tr>
+                <tr mat-row *matRowDef="let row; columns: prescriptionColumns;" 
+                    class="hover:bg-gray-50 cursor-pointer"></tr>
+              </table>
+            </div>
+
+            <ng-template #noPrescriptions>
+              <div class="text-center py-8">
+                <mat-icon class="text-6xl text-gray-300 mb-4">medication</mat-icon>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune prescription</h3>
+                <p class="text-gray-600 mb-4">Ce patient n'a pas encore de prescription.</p>
+                <button mat-raised-button (click)="onNewPrescription()" 
+                        *ngIf="authService.hasAnyRole([UserRole.ADMIN, UserRole.DOCTOR])"
+                        class="bg-purple-600 hover:bg-purple-700 text-white">
+                  <mat-icon>add</mat-icon>
+                  Créer une prescription
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

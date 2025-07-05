@@ -47,8 +47,13 @@ export const routes: Routes = [
         component: PatientFormComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY] }
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./pages/patients/patient-detail/patient-detail.component').then(m => m.PatientDetailComponent),
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN, UserRole.DOCTOR, UserRole.SECRETARY] }
       }
-      // Autres routes patients à implémenter plus tard
     ]
   },
   
