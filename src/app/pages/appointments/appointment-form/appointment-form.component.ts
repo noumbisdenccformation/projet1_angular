@@ -315,4 +315,36 @@ export class AppointmentFormComponent implements OnInit {
   getDoctorDisplayName(doctor: any): string {
     return `${doctor.name} - ${doctor.specialty}`;
   }
+
+  getSelectedPatientName(): string {
+    const patientId = this.appointmentForm.get('patientId')?.value;
+    const patient = this.patients.find(p => p.id == patientId);
+    return patient ? `${patient.firstName} ${patient.lastName}` : '';
+  }
+
+  getSelectedDoctorName(): string {
+    const doctorId = this.appointmentForm.get('doctorId')?.value;
+    const doctor = this.doctors.find(d => d.id == doctorId);
+    return doctor ? doctor.name : '';
+  }
+
+  getSelectedDate(): string {
+    const date = this.appointmentForm.get('date')?.value;
+    return date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
+  }
+
+  getSelectedTimeRange(): string {
+    const startTime = this.appointmentForm.get('startTime')?.value;
+    const endTime = this.appointmentForm.get('endTime')?.value;
+    return startTime && endTime ? `${startTime} - ${endTime}` : '';
+  }
+
+  getSelectedTypeDisplay(): string {
+    const type = this.appointmentForm.get('type')?.value;
+    return type ? this.getTypeDisplayName(type) : '';
+  }
+
+  getSelectedRoom(): string {
+    return this.appointmentForm.get('room')?.value || '';
+  }
 }

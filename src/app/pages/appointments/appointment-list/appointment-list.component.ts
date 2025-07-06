@@ -77,7 +77,7 @@ export class AppointmentListComponent implements OnInit {
 
   constructor(
     private appointmentService: AppointmentService,
-    private authService: AuthService,
+    public authService: AuthService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder
   ) {

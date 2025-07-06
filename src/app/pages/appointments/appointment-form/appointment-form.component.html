@@ -138,33 +138,32 @@
           <div>
             <span class="font-medium text-blue-700">Patient:</span>
             <span class="ml-2 text-blue-900">
-              {{ patients.find(p => p.id == appointmentForm.get('patientId')?.value)?.firstName }}
-              {{ patients.find(p => p.id == appointmentForm.get('patientId')?.value)?.lastName }}
+              {{ getSelectedPatientName() }}
             </span>
           </div>
           <div>
             <span class="font-medium text-blue-700">Médecin:</span>
             <span class="ml-2 text-blue-900">
-              {{ doctors.find(d => d.id == appointmentForm.get('doctorId')?.value)?.name }}
+              {{ getSelectedDoctorName() }}
             </span>
           </div>
           <div>
             <span class="font-medium text-blue-700">Date:</span>
-            <span class="ml-2 text-blue-900">{{ appointmentForm.get('date')?.value | date:'fullDate':'fr' }}</span>
+            <span class="ml-2 text-blue-900">{{ getSelectedDate() }}</span>
           </div>
           <div>
             <span class="font-medium text-blue-700">Horaire:</span>
             <span class="ml-2 text-blue-900">
-              {{ appointmentForm.get('startTime')?.value }} - {{ appointmentForm.get('endTime')?.value }}
+              {{ getSelectedTimeRange() }}
             </span>
           </div>
           <div>
             <span class="font-medium text-blue-700">Type:</span>
-            <span class="ml-2 text-blue-900">{{ getTypeDisplayName(appointmentForm.get('type')?.value) }}</span>
+            <span class="ml-2 text-blue-900">{{ getSelectedTypeDisplay() }}</span>
           </div>
           <div>
             <span class="font-medium text-blue-700">Salle:</span>
-            <span class="ml-2 text-blue-900">{{ appointmentForm.get('room')?.value }}</span>
+            <span class="ml-2 text-blue-900">{{ getSelectedRoom() }}</span>
           </div>
         </div>
       </div>
