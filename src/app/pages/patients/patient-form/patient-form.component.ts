@@ -343,14 +343,13 @@ export class PatientFormComponent implements OnInit {
 
     return requiredFields.every(field => {
       const control = this.patientForm.get(field);
-      if (!control || !control.value) return false;
+      const value = control?.value;
       
-      // Pour les strings, vérifier qu'elles ne sont pas vides après trim
-      if (typeof control.value === 'string') {
-        return control.value.trim() !== '';
-      }
+      // Vérifier que la valeur existe et n'est pas vide
+      if (!value) return false;
+      if (value === '') return false;
+      if (value === null || value === undefined) return false;
       
-      // Pour les autres types (dates, sélections), vérifier juste qu'ils existent
       return true;
     });
   }

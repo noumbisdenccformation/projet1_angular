@@ -240,11 +240,11 @@ export class AppointmentFormComponent implements OnInit {
     
     const fieldsValid = requiredFields.every(field => {
       const control = this.appointmentForm.get(field);
-      if (!control || !control.value) return false;
+      const value = control?.value;
       
-      if (typeof control.value === 'string') {
-        return control.value.trim() !== '';
-      }
+      if (!value) return false;
+      if (value === '') return false;
+      if (value === null || value === undefined) return false;
       
       return true;
     });
