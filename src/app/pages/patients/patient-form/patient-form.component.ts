@@ -206,7 +206,7 @@ export class PatientFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.patientForm.valid) {
+    if (this.isFormValid()) {
       this.isSubmitting = true;
       const formData: PatientFormData = this.patientForm.value;
 

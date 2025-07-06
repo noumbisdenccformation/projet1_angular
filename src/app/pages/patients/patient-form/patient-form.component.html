@@ -53,6 +53,7 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Sexe *</mat-label>
             <mat-select formControlName="gender">
+              <mat-option value="">-- Sélectionner --</mat-option>
               <mat-option *ngFor="let option of genderOptions" [value]="option.value">
                 {{ option.label }}
               </mat-option>
@@ -274,6 +275,8 @@
         <h3 class="text-yellow-800 font-medium mb-2">Debug - Formulaire invalide :</h3>
         <p class="text-sm text-yellow-700">Form valid: {{ patientForm.valid }}</p>
         <p class="text-sm text-yellow-700">Custom valid: {{ isFormValid() }}</p>
+        <p class="text-sm text-yellow-700">Genre sélectionné: "{{ patientForm.get('gender')?.value }}"</p>
+        <p class="text-sm text-yellow-700">Genre valide: {{ patientForm.get('gender')?.valid }}</p>
         <button type="button" mat-button color="warn" (click)="debugForm()" class="mt-2">
           Voir détails console
         </button>
