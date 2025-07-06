@@ -269,12 +269,22 @@
         </div>
       </div>
 
+      <!-- Debug info -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4" *ngIf="!isFormValid()">
+        <h3 class="text-yellow-800 font-medium mb-2">Debug - Formulaire invalide :</h3>
+        <p class="text-sm text-yellow-700">Form valid: {{ patientForm.valid }}</p>
+        <p class="text-sm text-yellow-700">Custom valid: {{ isFormValid() }}</p>
+        <button type="button" mat-button color="warn" (click)="debugForm()" class="mt-2">
+          Voir détails console
+        </button>
+      </div>
+
       <!-- Boutons d'action -->
       <div class="flex items-center justify-end space-x-4 bg-white rounded-lg shadow-md p-6">
         <button type="button" mat-button (click)="onCancel()" [disabled]="isSubmitting" class="clinic-button-secondary">
           Annuler
         </button>
-        <button type="submit" mat-raised-button color="primary" [disabled]="patientForm.invalid || isSubmitting" class="clinic-button-primary">
+        <button type="submit" mat-raised-button color="primary" [disabled]="isSubmitting || !isFormValid()" class="clinic-button-primary">
           <mat-spinner diameter="20" *ngIf="isSubmitting" class="mr-2"></mat-spinner>
           <mat-icon *ngIf="!isSubmitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
           <span class="ml-2">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>

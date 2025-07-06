@@ -327,4 +327,41 @@ export class PatientFormComponent implements OnInit {
     }
     return '';
   }
+
+  // Validation personnalisée pour les champs essentiels seulement
+  isFormValid(): boolean {
+    const requiredFields = [
+      'firstName',
+      'lastName', 
+      'dateOfBirth',
+      'gender',
+      'phone',
+      'address',
+      'city',
+      'postalCode'
+    ];
+
+    return requiredFields.every(field => {
+      const control = this.patientForm.get(field);
+      return control && control.valid && control.value && control.value.trim() !== '';
+    });
+  }
+
+  // Debug: voir l'état du formulaire
+  debugForm(): void {
+    console.log('Form valid:', this.patientForm.valid);
+    console.log('Custom valid:', this.isFormValid());
+    console.log('Form errors:', this.getFormErrors());
+  }
+
+  private getFormErrors(): any {
+    const errors: any = {};
+    Object.keys(this.patientForm.controls).forEach(key => {
+      const control = this.patientForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
+  }
 }
