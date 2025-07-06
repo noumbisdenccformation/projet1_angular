@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { PrescriptionService } from '../../../services/prescription.service';
 import { AuthService } from '../../../services/auth.service';
@@ -10,7 +12,7 @@ import { Prescription } from '../../../models/prescription.model';
 @Component({
   selector: 'app-prescription-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './prescription-list.component.html',
   styleUrls: ['./prescription-list.component.css']
 })
