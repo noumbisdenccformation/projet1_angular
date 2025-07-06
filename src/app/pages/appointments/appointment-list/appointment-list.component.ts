@@ -311,4 +311,9 @@ export class AppointmentListComponent implements OnInit {
     return this.authService.hasAnyRole([UserRole.ADMIN, UserRole.SECRETARY]) ||
            (this.authService.isDoctor() && appointment.doctorId === this.authService.currentUser?.id);
   }
+
+  getTodayAppointmentsCount(): number {
+    const today = new Date().toDateString();
+    return this.appointments.filter(a => new Date(a.date).toDateString() === today).length;
+  }
 }

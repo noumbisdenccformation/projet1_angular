@@ -73,7 +73,7 @@
         <div class="flex items-center space-x-6 text-sm text-gray-600">
           <span><strong>Total:</strong> {{ appointments.length }}</span>
           <span><strong>Affichés:</strong> {{ totalItems }}</span>
-          <span><strong>Aujourd'hui:</strong> {{ appointments.filter(a => a.date.toDateString() === new Date().toDateString()).length }}</span>
+          <span><strong>Aujourd'hui:</strong> {{ getTodayAppointmentsCount() }}</span>
         </div>
         <button mat-button (click)="clearFilters()" class="text-clinic-primary">
           Effacer les filtres
