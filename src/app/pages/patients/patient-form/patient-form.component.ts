@@ -100,7 +100,7 @@ export class PatientFormComponent implements OnInit {
       email: ['', [Validators.email]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required]],
-      postalCode: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+      postalCode: ['', [Validators.required, Validators.pattern(/^[0-9A-Za-z\+\-\s]{2,10}$/)]],
       
       // Contact d'urgence (optionnel pour débloquer le bouton)
       emergencyContactName: [''],
@@ -310,7 +310,7 @@ export class PatientFormComponent implements OnInit {
     }
     if (control?.hasError('pattern')) {
       if (controlName === 'postalCode') {
-        return 'Code postal invalide (5 chiffres)';
+        return 'Code postal invalide (2-10 caractères, lettres/chiffres/+/-)';
       }
       if (controlName === 'phone' || controlName === 'emergencyContactPhone') {
         return 'Numéro de téléphone invalide';

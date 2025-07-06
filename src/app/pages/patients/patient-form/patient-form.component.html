@@ -96,7 +96,7 @@
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Code postal *</mat-label>
-            <input matInput formControlName="postalCode" placeholder="75001">
+            <input matInput formControlName="postalCode" placeholder="Ex: +237, 75001, CM-001">
             <mat-error>{{ getErrorMessage('postalCode') }}</mat-error>
           </mat-form-field>
         </div>
@@ -113,13 +113,11 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Nom complet</mat-label>
             <input matInput formControlName="emergencyContactName" placeholder="Nom du contact (optionnel)">
-            <mat-error>{{ getErrorMessage('emergencyContactName') }}</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Téléphone</mat-label>
             <input matInput formControlName="emergencyContactPhone" placeholder="0123456789 (optionnel)">
-            <mat-error>{{ getErrorMessage('emergencyContactPhone') }}</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
@@ -130,7 +128,6 @@
                 {{ option.label }}
               </mat-option>
             </mat-select>
-            <mat-error>{{ getErrorMessage('emergencyContactRelationship') }}</mat-error>
           </mat-form-field>
         </div>
       </div>
