@@ -398,10 +398,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount);
+    return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
   }
 
   clearFilters(): void {

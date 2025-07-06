@@ -121,7 +121,7 @@
         {{ invoice.patientName }}
       </div>
       <div class="col amount">
-        <strong>{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+        <strong>{{ invoice.total | number:'1.0-0' }} FCFA</strong>
       </div>
       <div class="col status">
         <span class="status-badge" [class]="getStatusClass(invoice.status)">

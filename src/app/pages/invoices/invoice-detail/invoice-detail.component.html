@@ -33,7 +33,7 @@
           {{ getStatusText(invoice.status) }}
         </div>
         <div class="total-amount">
-          {{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}
+          {{ invoice.total | number:'1.0-0' }} FCFA
         </div>
       </div>
     </div>
@@ -78,8 +78,8 @@
         <div class="table-row" *ngFor="let item of invoice.items">
           <div class="col description">{{ item.description }}</div>
           <div class="col quantity">{{ item.quantity }}</div>
-          <div class="col price">{{ item.unitPrice | currency:'EUR':'symbol':'1.2-2' }}</div>
-          <div class="col total">{{ item.total | currency:'EUR':'symbol':'1.2-2' }}</div>
+          <div class="col price">{{ item.unitPrice | number:'1.0-0' }} FCFA</div>
+          <div class="col total">{{ item.total | number:'1.0-0' }} FCFA</div>
         </div>
       </div>
     </div>
@@ -96,15 +96,15 @@
     <div class="invoice-summary">
       <div class="summary-row">
         <span class="summary-label">Total HT:</span>
-        <span class="summary-value">{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</span>
+        <span class="summary-value">{{ invoice.total | number:'1.0-0' }} FCFA</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label">TVA (20%):</span>
-        <span class="summary-value">{{ invoice.total * 0.2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+        <span class="summary-label">TVA (19.25%):</span>
+        <span class="summary-value">{{ invoice.total * 0.1925 | number:'1.0-0' }} FCFA</span>
       </div>
       <div class="summary-row total">
         <span class="summary-label">Total TTC:</span>
-        <span class="summary-value">{{ invoice.total * 1.2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+        <span class="summary-value">{{ invoice.total * 1.1925 | number:'1.0-0' }} FCFA</span>
       </div>
     </div>
 

@@ -70,7 +70,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm font-medium text-gray-600">Revenus du mois</p>
-          <p class="text-3xl font-bold text-gray-900">{{ monthlyRevenue | currency:'EUR':'symbol':'1.0-0' }}</p>
+          <p class="text-3xl font-bold text-gray-900">{{ monthlyRevenue | number:'1.0-0' }} FCFA</p>
           <p class="text-sm text-green-600 flex items-center mt-1">
             <mat-icon class="text-sm mr-1">trending_up</mat-icon>
             +8% vs mois dernier
