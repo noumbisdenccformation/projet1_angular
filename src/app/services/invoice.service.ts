@@ -19,21 +19,21 @@ export class InvoiceService {
           id: 1,
           description: 'Consultation cardiologie',
           quantity: 1,
-          unitPrice: 80,
-          total: 80
+          unitPrice: 50000,
+          total: 50000
         },
         {
           id: 2,
           description: 'Électrocardiogramme',
           quantity: 1,
-          unitPrice: 45,
-          total: 45
+          unitPrice: 30000,
+          total: 30000
         }
       ],
-      subtotal: 125,
-      tax: 25,
+      subtotal: 80000,
+      tax: 15400,
       discount: 0,
-      total: 150,
+      total: 95400,
       status: InvoiceStatus.PAID,
       issueDate: new Date('2024-01-15'),
       dueDate: new Date('2024-01-20'),
@@ -53,28 +53,28 @@ export class InvoiceService {
           id: 3,
           description: 'Consultation diabétologie',
           quantity: 1,
-          unitPrice: 90,
-          total: 90
+          unitPrice: 60000,
+          total: 60000
         },
         {
           id: 4,
           description: 'Analyse glycémique',
           quantity: 1,
-          unitPrice: 35,
-          total: 35
+          unitPrice: 25000,
+          total: 25000
         },
         {
           id: 5,
           description: 'Médicaments (Metformine)',
           quantity: 1,
-          unitPrice: 25,
-          total: 25
+          unitPrice: 15000,
+          total: 15000
         }
       ],
-      subtotal: 150,
-      tax: 30,
-      discount: 10,
-      total: 170,
+      subtotal: 100000,
+      tax: 19250,
+      discount: 5000,
+      total: 114250,
       status: InvoiceStatus.PENDING,
       issueDate: new Date('2024-01-15'),
       dueDate: new Date('2024-02-15'),
@@ -93,21 +93,21 @@ export class InvoiceService {
           id: 6,
           description: 'Consultation dermatologie',
           quantity: 1,
-          unitPrice: 75,
-          total: 75
+          unitPrice: 45000,
+          total: 45000
         },
         {
           id: 7,
           description: 'Biopsie cutanée',
           quantity: 1,
-          unitPrice: 120,
-          total: 120
+          unitPrice: 75000,
+          total: 75000
         }
       ],
-      subtotal: 195,
-      tax: 39,
+      subtotal: 120000,
+      tax: 23100,
       discount: 0,
-      total: 234,
+      total: 143100,
       status: InvoiceStatus.OVERDUE,
       issueDate: new Date('2024-01-05'),
       dueDate: new Date('2024-01-10'),
@@ -166,7 +166,7 @@ export class InvoiceService {
     }));
 
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-    const tax = subtotal * 0.20; // 20% de TVA
+    const tax = subtotal * 0.1925; // 19.25% de TVA (Cameroun)
     const total = subtotal + tax - invoiceData.discount;
 
     const newInvoice: Invoice = {
@@ -202,7 +202,7 @@ export class InvoiceService {
     // Recalculer les totaux si les items ont changé
     if (updates.items) {
       const subtotal = updates.items.reduce((sum, item) => sum + item.total, 0);
-      const tax = subtotal * 0.20;
+      const tax = subtotal * 0.1925;
       const discount = updates.discount || this.invoices[index].discount;
       const total = subtotal + tax - discount;
 
@@ -316,7 +316,7 @@ export class InvoiceService {
   // Calculer les totaux pour un formulaire
   calculateTotals(items: any[], discount: number = 0): { subtotal: number; tax: number; total: number } {
     const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const tax = subtotal * 0.20;
+    const tax = subtotal * 0.1925;
     const total = subtotal + tax - discount;
     
     return { subtotal, tax, total };
