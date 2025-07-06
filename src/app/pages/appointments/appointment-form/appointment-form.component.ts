@@ -107,17 +107,25 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   private setupFormValidation(): void {
-    // Validation de la date (pas dans le passé)
+    // Validation de la date (pas dans le passé) - plus flexible
     this.appointmentForm.get('date')?.valueChanges.subscribe(date => {
       if (date) {
         const selectedDate = new Date(date);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        selectedDate.setHours(0, 0, 0, 0);
         
+        // Permettre aujourd'hui et le futur
         if (selectedDate < today) {
           this.appointmentForm.get('date')?.setErrors({ pastDate: true });
         } else {
-          this.appointmentForm.get('date')?.setErrors(null);
+          // Supprimer l'erreur pastDate mais garder les autres erreurs
+          const currentErrors = this.appointmentForm.get('date')?.errors;
+          if (currentErrors && currentErrors['pastDate']) {
+            delete currentErrors['pastDate'];
+            const hasOtherErrors = Object.keys(currentErrors).length > 0;
+            this.appointmentForm.get('date')?.setErrors(hasOtherErrors ? currentErrors : null);
+          }
         }
       }
     });
@@ -212,7 +220,7 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.appointmentForm.valid && !this.hasConflict) {
+    if (this.isFormValid() && !this.hasConflict) {
       this.submitting = true;
       const formData: AppointmentFormData = this.appointmentForm.value;
       
@@ -224,6 +232,40 @@ export class AppointmentFormComponent implements OnInit {
     } else {
       this.markFormGroupTouched();
     }
+  }
+
+  // Validation personnalisée pour les champs essentiels
+  isFormValid(): boolean {
+    const requiredFields = ['patientId', 'doctorId', 'date', 'startTime', 'endTime', 'type', 'room'];
+    
+    return requiredFields.every(field => {
+      const control = this.appointmentForm.get(field);
+      return control && control.value && control.value !== '';
+    }) && this.isDateValid() && this.isTimeRangeValid();
+  }
+
+  private isDateValid(): boolean {
+    const dateControl = this.appointmentForm.get('date');
+    if (!dateControl || !dateControl.value) return false;
+    
+    const selectedDate = new Date(dateControl.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    return selectedDate >= today;
+  }
+
+  private isTimeRangeValid(): boolean {
+    const startTime = this.appointmentForm.get('startTime')?.value;
+    const endTime = this.appointmentForm.get('endTime')?.value;
+    
+    if (!startTime || !endTime) return false;
+    
+    const start = new Date(`2000-01-01T${startTime}`);
+    const end = new Date(`2000-01-01T${endTime}`);
+    
+    return end > start;
   }
 
   private createAppointment(formData: AppointmentFormData): void {

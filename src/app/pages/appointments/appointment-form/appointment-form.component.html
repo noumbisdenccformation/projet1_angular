@@ -168,6 +168,16 @@
         </div>
       </div>
 
+      <!-- Debug info -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4" *ngIf="!isFormValid()">
+        <h3 class="text-yellow-800 font-medium mb-2">Debug - Formulaire invalide :</h3>
+        <p class="text-sm text-yellow-700">Form valid: {{ appointmentForm.valid }}</p>
+        <p class="text-sm text-yellow-700">Custom valid: {{ isFormValid() }}</p>
+        <p class="text-sm text-yellow-700">Date valid: {{ isDateValid() }}</p>
+        <p class="text-sm text-yellow-700">Time valid: {{ isTimeRangeValid() }}</p>
+        <p class="text-sm text-yellow-700">Has conflict: {{ hasConflict }}</p>
+      </div>
+
       <!-- Boutons d'action -->
       <div class="flex items-center justify-end space-x-4 bg-white rounded-lg shadow-md p-6">
         <button type="button" mat-button (click)="onCancel()" [disabled]="submitting" 
@@ -175,7 +185,7 @@
           Annuler
         </button>
         <button type="submit" mat-raised-button color="primary" 
-                [disabled]="appointmentForm.invalid || hasConflict || submitting" 
+                [disabled]="!isFormValid() || hasConflict || submitting" 
                 class="clinic-button-primary">
           <mat-spinner diameter="20" *ngIf="submitting" class="mr-2"></mat-spinner>
           <mat-icon *ngIf="!submitting">{{ isEditMode ? 'save' : 'event_available' }}</mat-icon>
