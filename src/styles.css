@@ -7,7 +7,7 @@
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 0 20px;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background-color: #fafafa;
   line-height: 1.5;
@@ -17,17 +17,44 @@ body {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 40px;
+}
+
+/* Espacement général pour tous les contenus */
+app-root {
+  display: block;
+  padding: 0 20px;
+}
+
+/* Marges pour les pages principales */
+.min-h-screen {
+  min-height: 100vh;
+  padding: 20px 40px;
+}
+
+/* Conteneurs de pages avec marges */
+.max-w-7xl,
+.max-w-6xl,
+.max-w-4xl {
+  margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 /* Cartes avec espacement correct */
 .mat-mdc-card {
-  margin-bottom: 20px !important;
+  margin: 20px 0 !important;
   padding: 0 !important;
 }
 
 .mat-mdc-card-content {
-  padding: 24px !important;
+  padding: 24px 32px !important;
+}
+
+/* Espacement des sections */
+.bg-white {
+  margin: 16px 0;
+  padding: 24px 32px;
 }
 
 /* Formulaires plus lisibles */
@@ -135,11 +162,30 @@ button {
 
 /* Responsive */
 @media (max-width: 600px) {
+  body {
+    padding: 0 10px;
+  }
+  
   .container {
-    padding: 10px;
+    padding: 10px 20px;
+  }
+  
+  .min-h-screen {
+    padding: 10px 20px;
+  }
+  
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-4xl {
+    padding-left: 20px;
+    padding-right: 20px;
   }
   
   .mat-mdc-card-content {
-    padding: 16px !important;
+    padding: 16px 20px !important;
+  }
+  
+  .bg-white {
+    padding: 16px 20px;
   }
 }
