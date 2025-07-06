@@ -134,8 +134,8 @@ export class InvoiceFormComponent implements OnInit {
     const lineGroup = this.fb.group({
       description: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
-      unitPrice: [0, [Validators.required, Validators.min(0)]],
-      total: [0, Validators.required]
+      unitPrice: [5000, [Validators.required, Validators.min(0)]],
+      total: [5000, Validators.required]
     });
 
     this.invoiceLines.push(lineGroup);
@@ -257,7 +257,7 @@ export class InvoiceFormComponent implements OnInit {
         const unitPrice = line.get('unitPrice')?.value;
         
         return description && description !== '' && 
-               quantity > 0 && unitPrice >= 0;
+               quantity >= 1 && unitPrice !== null && unitPrice !== undefined;
       });
 
     return mainFieldsValid && linesValid;
