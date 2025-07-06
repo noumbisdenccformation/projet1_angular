@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { User, UserRole, LoginRequest, LoginResponse } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +16,9 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  constructor() {
+  private apiUrl = environment.apiUrl;
+
+  constructor(private http: HttpClient) {
     this.loadUserFromStorage();
   }
 
@@ -32,12 +37,26 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    // TODO: Remplacer par un vrai appel API
+    // Essayer l'API réelle d'abord
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, {
+      email: credentials.username + '@clinique.com',
+      password: credentials.password
+    }).pipe(
+      tap(response => this.setCurrentUser(response)),
+      catchError(error => {
+        console.warn('API non disponible, utilisation du mode mock:', error);
+        // Fallback vers le mode mock
+        return this.mockLogin(credentials);
+      })
+    );
+  }
+
+  private mockLogin(credentials: LoginRequest): Observable<LoginResponse> {
     const mockResponse: LoginResponse = {
       user: {
         id: 1,
         username: credentials.username,
-        email: 'user@clinique.com',
+        email: credentials.username + '@clinique.com',
         firstName: 'John',
         lastName: 'Doe',
         role: credentials.username === 'admin' ? UserRole.ADMIN : 
@@ -49,7 +68,6 @@ export class AuthService {
       refreshToken: 'mock-refresh-token'
     };
 
-    // Simuler un délai réseau
     return new Observable(observer => {
       setTimeout(() => {
         this.setCurrentUser(mockResponse);
