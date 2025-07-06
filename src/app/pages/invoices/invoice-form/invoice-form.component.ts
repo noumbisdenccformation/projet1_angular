@@ -162,7 +162,7 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.invoiceForm.valid) {
+    if (this.isFormValid()) {
       this.loading = true;
       this.errorMessage = '';
 
@@ -231,5 +231,29 @@ export class InvoiceFormComponent implements OnInit {
     const line = this.invoiceLines.at(lineIndex);
     const field = line.get(fieldName);
     return !!(field && field.invalid && field.touched);
+  }
+
+  // Validation personnalisée pour les champs essentiels
+  isFormValid(): boolean {
+    const requiredFields = ['patientId', 'invoiceNumber', 'issueDate', 'dueDate', 'status'];
+    
+    // Vérifier les champs principaux
+    const mainFieldsValid = requiredFields.every(field => {
+      const control = this.invoiceForm.get(field);
+      return control && control.value && control.value !== '';
+    });
+
+    // Vérifier qu'il y a au moins une ligne valide
+    const linesValid = this.invoiceLines.length > 0 && 
+      this.invoiceLines.controls.every(line => {
+        const description = line.get('description')?.value;
+        const quantity = line.get('quantity')?.value;
+        const unitPrice = line.get('unitPrice')?.value;
+        
+        return description && description.trim() !== '' && 
+               quantity > 0 && unitPrice >= 0;
+      });
+
+    return mainFieldsValid && linesValid;
   }
 }

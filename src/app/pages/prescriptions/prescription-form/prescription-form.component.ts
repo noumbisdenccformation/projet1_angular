@@ -223,7 +223,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.prescriptionForm.invalid) {
+    if (!this.isFormValid()) {
       this.markFormGroupTouched();
       return;
     }
@@ -329,5 +329,28 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
       return `${patientName} - ${date}`;
     }
     return '';
+  }
+
+  // Validation personnalisée pour les champs essentiels
+  isFormValid(): boolean {
+    const requiredFields = ['appointmentId', 'patientId', 'doctorId', 'diagnosis'];
+    
+    // Vérifier les champs principaux
+    const mainFieldsValid = requiredFields.every(field => {
+      const control = this.prescriptionForm.get(field);
+      return control && control.value && control.value.trim() !== '';
+    });
+
+    // Vérifier qu'il y a au moins un médicament valide
+    const medicationsValid = this.medicationsArray.length > 0 && 
+      this.medicationsArray.controls.every(group => {
+        const requiredMedFields = ['name', 'dosage', 'frequency', 'duration', 'instructions'];
+        return requiredMedFields.every(field => {
+          const control = group.get(field);
+          return control && control.value && control.value.trim() !== '';
+        });
+      });
+
+    return mainFieldsValid && medicationsValid;
   }
 } 
