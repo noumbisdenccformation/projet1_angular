@@ -240,7 +240,13 @@ export class InvoiceFormComponent implements OnInit {
     // Vérifier les champs principaux
     const mainFieldsValid = requiredFields.every(field => {
       const control = this.invoiceForm.get(field);
-      return control && control.value && control.value !== '';
+      if (!control || !control.value) return false;
+      
+      if (typeof control.value === 'string') {
+        return control.value.trim() !== '';
+      }
+      
+      return true;
     });
 
     // Vérifier qu'il y a au moins une ligne valide
@@ -250,7 +256,8 @@ export class InvoiceFormComponent implements OnInit {
         const quantity = line.get('quantity')?.value;
         const unitPrice = line.get('unitPrice')?.value;
         
-        return description && description.trim() !== '' && 
+        return description && 
+               (typeof description === 'string' ? description.trim() !== '' : true) && 
                quantity > 0 && unitPrice >= 0;
       });
 

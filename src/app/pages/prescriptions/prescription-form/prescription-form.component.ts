@@ -338,7 +338,13 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
     // Vérifier les champs principaux
     const mainFieldsValid = requiredFields.every(field => {
       const control = this.prescriptionForm.get(field);
-      return control && control.value && control.value.trim() !== '';
+      if (!control || !control.value) return false;
+      
+      if (typeof control.value === 'string') {
+        return control.value.trim() !== '';
+      }
+      
+      return true;
     });
 
     // Vérifier qu'il y a au moins un médicament valide
@@ -347,7 +353,13 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
         const requiredMedFields = ['name', 'dosage', 'frequency', 'duration', 'instructions'];
         return requiredMedFields.every(field => {
           const control = group.get(field);
-          return control && control.value && control.value.trim() !== '';
+          if (!control || !control.value) return false;
+          
+          if (typeof control.value === 'string') {
+            return control.value.trim() !== '';
+          }
+          
+          return true;
         });
       });
 

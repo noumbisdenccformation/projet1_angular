@@ -238,10 +238,18 @@ export class AppointmentFormComponent implements OnInit {
   isFormValid(): boolean {
     const requiredFields = ['patientId', 'doctorId', 'date', 'startTime', 'endTime', 'type', 'room'];
     
-    return requiredFields.every(field => {
+    const fieldsValid = requiredFields.every(field => {
       const control = this.appointmentForm.get(field);
-      return control && control.value && control.value !== '';
-    }) && this.isDateValid() && this.isTimeRangeValid();
+      if (!control || !control.value) return false;
+      
+      if (typeof control.value === 'string') {
+        return control.value.trim() !== '';
+      }
+      
+      return true;
+    });
+    
+    return fieldsValid && this.isDateValid() && this.isTimeRangeValid();
   }
 
   private isDateValid(): boolean {
