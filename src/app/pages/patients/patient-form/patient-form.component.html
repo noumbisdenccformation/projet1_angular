@@ -106,25 +106,26 @@
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
           <mat-icon class="mr-2 text-red-600">emergency</mat-icon>
-          Contact d'urgence
+          Contact d'urgence (optionnel)
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Nom complet *</mat-label>
-            <input matInput formControlName="emergencyContactName" placeholder="Nom du contact">
+            <mat-label>Nom complet</mat-label>
+            <input matInput formControlName="emergencyContactName" placeholder="Nom du contact (optionnel)">
             <mat-error>{{ getErrorMessage('emergencyContactName') }}</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Téléphone *</mat-label>
-            <input matInput formControlName="emergencyContactPhone" placeholder="0123456789">
+            <mat-label>Téléphone</mat-label>
+            <input matInput formControlName="emergencyContactPhone" placeholder="0123456789 (optionnel)">
             <mat-error>{{ getErrorMessage('emergencyContactPhone') }}</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Relation *</mat-label>
+            <mat-label>Relation</mat-label>
             <mat-select formControlName="emergencyContactRelationship">
+              <mat-option value="">-- Sélectionner --</mat-option>
               <mat-option *ngFor="let option of relationshipOptions" [value]="option.value">
                 {{ option.label }}
               </mat-option>

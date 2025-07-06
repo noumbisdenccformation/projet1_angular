@@ -98,14 +98,14 @@ export class PatientFormComponent implements OnInit {
       gender: ['', [Validators.required]],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
       email: ['', [Validators.email]],
-      address: ['', [Validators.required, Validators.minLength(10)]],
+      address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required]],
       postalCode: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
       
-      // Contact d'urgence
-      emergencyContactName: ['', [Validators.required]],
-      emergencyContactPhone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
-      emergencyContactRelationship: ['', [Validators.required]],
+      // Contact d'urgence (optionnel pour débloquer le bouton)
+      emergencyContactName: [''],
+      emergencyContactPhone: ['', [Validators.pattern(/^[0-9+\-\s()]+$/)]],
+      emergencyContactRelationship: [''],
       
       // Antécédents médicaux
       allergies: this.fb.array([]),
@@ -113,10 +113,13 @@ export class PatientFormComponent implements OnInit {
       surgeries: this.fb.array([]),
       medications: this.fb.array([]),
       
-      // Assurance
+      // Assurance (optionnel)
       insuranceProvider: [''],
       insurancePolicyNumber: [''],
-      insuranceGroupNumber: ['']
+      insuranceGroupNumber: [''],
+      
+      // Notes (optionnel)
+      notes: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -296,7 +299,14 @@ export class PatientFormComponent implements OnInit {
     }
     if (control?.hasError('minlength')) {
       const requiredLength = control.errors?.['minlength'].requiredLength;
+      if (controlName === 'address') {
+        return `Adresse trop courte (minimum ${requiredLength} caractères)`;
+      }
       return `Minimum ${requiredLength} caractères requis`;
+    }
+    if (control?.hasError('maxlength')) {
+      const maxLength = control.errors?.['maxlength'].requiredLength;
+      return `Maximum ${maxLength} caractères autorisés`;
     }
     if (control?.hasError('pattern')) {
       if (controlName === 'postalCode') {
