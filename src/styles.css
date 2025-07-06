@@ -1,17 +1,123 @@
 /* Reset et styles globaux */
 * {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   margin: 0;
   padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f9fafb;
-  line-height: 1.5;
-  overflow-x: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  background-color: #f9fafb !important;
+  line-height: 1.6 !important;
+  overflow-x: hidden !important;
+  font-size: 14px !important;
+}
+
+/* Correction des conflits de texte */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3 !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: 600 !important;
+}
+
+p {
+  margin-bottom: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Espacement des éléments */
+.mat-mdc-card {
+  margin-bottom: 1rem !important;
+}
+
+.mat-mdc-card-content {
+  padding: 1.5rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Correction des overlaps de texte */
+.mat-mdc-form-field {
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+.mat-mdc-form-field .mat-mdc-form-field-infix {
+  padding: 0.75rem 0 !important;
+}
+
+/* Tables plus lisibles */
+table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+td, th {
+  padding: 0.75rem !important;
+  vertical-align: top !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+th {
+  background-color: #f9fafb !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+/* Boutons plus espacés */
+button {
+  margin: 0.25rem !important;
+  white-space: nowrap !important;
+}
+
+/* Navigation plus claire */
+.mat-toolbar {
+  padding: 0 1rem !important;
+  min-height: 64px !important;
+}
+
+.mat-toolbar .mat-toolbar-row {
+  height: 64px !important;
+}
+
+/* Cartes mieux espacées */
+.clinic-card {
+  margin-bottom: 1.5rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Listes plus lisibles */
+ul, ol {
+  padding-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+li {
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Inputs mieux espacés */
+input, textarea, select {
+  padding: 0.75rem !important;
+  line-height: 1.5 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.375rem !important;
+}
+
+/* Correction des z-index pour éviter les chevauchements */
+.mat-mdc-menu-panel {
+  z-index: 1000 !important;
+}
+
+.mat-mdc-dialog-container {
+  z-index: 1050 !important;
+}
+
+.mat-mdc-snack-bar-container {
+  z-index: 1100 !important;
 }
 
 /* Correction des conflits Angular Material */
@@ -116,37 +222,101 @@ body {
 
 /* Utilitaires avec !important pour forcer */
 .text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
 .flex { display: flex !important; }
+.flex-col { flex-direction: column !important; }
+.flex-row { flex-direction: row !important; }
+.items-start { align-items: flex-start !important; }
 .items-center { align-items: center !important; }
+.items-end { align-items: flex-end !important; }
+.justify-start { justify-content: flex-start !important; }
 .justify-center { justify-content: center !important; }
+.justify-end { justify-content: flex-end !important; }
 .justify-between { justify-content: space-between !important; }
+.space-x-1 > * + * { margin-left: 4px !important; }
 .space-x-2 > * + * { margin-left: 8px !important; }
 .space-x-3 > * + * { margin-left: 12px !important; }
+.space-x-4 > * + * { margin-left: 16px !important; }
+.space-y-2 > * + * { margin-top: 8px !important; }
+.space-y-3 > * + * { margin-top: 12px !important; }
 .space-y-4 > * + * { margin-top: 16px !important; }
+.space-y-6 > * + * { margin-top: 24px !important; }
 .w-full { width: 100% !important; }
+.w-auto { width: auto !important; }
+.h-full { height: 100% !important; }
 .min-h-screen { min-height: 100vh !important; }
+.max-w-xs { max-width: 20rem !important; }
+.max-w-sm { max-width: 24rem !important; }
+.max-w-md { max-width: 28rem !important; }
+.max-w-lg { max-width: 32rem !important; }
+.max-w-xl { max-width: 36rem !important; }
+.max-w-2xl { max-width: 42rem !important; }
+.max-w-4xl { max-width: 56rem !important; }
+.max-w-6xl { max-width: 72rem !important; }
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.p-2 { padding: 8px !important; }
+.p-3 { padding: 12px !important; }
 .p-4 { padding: 16px !important; }
 .p-6 { padding: 24px !important; }
+.px-2 { padding-left: 8px !important; padding-right: 8px !important; }
+.px-3 { padding-left: 12px !important; padding-right: 12px !important; }
+.px-4 { padding-left: 16px !important; padding-right: 16px !important; }
+.py-2 { padding-top: 8px !important; padding-bottom: 8px !important; }
+.py-3 { padding-top: 12px !important; padding-bottom: 12px !important; }
+.py-4 { padding-top: 16px !important; padding-bottom: 16px !important; }
+.m-2 { margin: 8px !important; }
+.m-4 { margin: 16px !important; }
+.mt-2 { margin-top: 8px !important; }
+.mt-4 { margin-top: 16px !important; }
+.mb-2 { margin-bottom: 8px !important; }
 .mb-4 { margin-bottom: 16px !important; }
 .mb-6 { margin-bottom: 24px !important; }
-.text-sm { font-size: 0.875rem !important; }
-.text-lg { font-size: 1.125rem !important; }
-.text-xl { font-size: 1.25rem !important; }
-.text-2xl { font-size: 1.5rem !important; }
-.text-3xl { font-size: 1.875rem !important; }
+.mr-2 { margin-right: 8px !important; }
+.mr-3 { margin-right: 12px !important; }
+.ml-2 { margin-left: 8px !important; }
+.ml-3 { margin-left: 12px !important; }
+.text-xs { font-size: 0.75rem !important; line-height: 1rem !important; }
+.text-sm { font-size: 0.875rem !important; line-height: 1.25rem !important; }
+.text-base { font-size: 1rem !important; line-height: 1.5rem !important; }
+.text-lg { font-size: 1.125rem !important; line-height: 1.75rem !important; }
+.text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+.text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+.text-3xl { font-size: 1.875rem !important; line-height: 2.25rem !important; }
+.font-normal { font-weight: 400 !important; }
 .font-medium { font-weight: 500 !important; }
 .font-semibold { font-weight: 600 !important; }
 .font-bold { font-weight: 700 !important; }
+.text-gray-400 { color: #9ca3af !important; }
 .text-gray-500 { color: #6b7280 !important; }
 .text-gray-600 { color: #4b5563 !important; }
 .text-gray-700 { color: #374151 !important; }
 .text-gray-800 { color: #1f2937 !important; }
 .text-gray-900 { color: #111827 !important; }
 .text-white { color: white !important; }
+.text-blue-600 { color: #2563eb !important; }
+.text-green-600 { color: #16a34a !important; }
+.text-red-600 { color: #dc2626 !important; }
+.text-yellow-600 { color: #ca8a04 !important; }
 .bg-white { background-color: white !important; }
 .bg-gray-50 { background-color: #f9fafb !important; }
-.rounded-lg { border-radius: 8px !important; }
-.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+.bg-gray-100 { background-color: #f3f4f6 !important; }
+.bg-blue-50 { background-color: #eff6ff !important; }
+.bg-green-50 { background-color: #f0fdf4 !important; }
+.bg-red-50 { background-color: #fef2f2 !important; }
+.border { border-width: 1px !important; }
+.border-gray-200 { border-color: #e5e7eb !important; }
+.border-gray-300 { border-color: #d1d5db !important; }
+.rounded { border-radius: 0.25rem !important; }
+.rounded-md { border-radius: 0.375rem !important; }
+.rounded-lg { border-radius: 0.5rem !important; }
+.shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-x-auto { overflow-x: auto !important; }
+.whitespace-nowrap { white-space: nowrap !important; }
+.truncate { overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 
 /* Correction des z-index */
 .navbar { z-index: 100 !important; }
