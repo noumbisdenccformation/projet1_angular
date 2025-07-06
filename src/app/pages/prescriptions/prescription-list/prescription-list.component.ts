@@ -275,6 +275,14 @@ export class PrescriptionListComponent implements OnInit, OnDestroy {
     return new Date(date).toLocaleDateString('fr-FR');
   }
 
+  getActivePrescriptionsCount(): number {
+    return this.prescriptions.filter(p => p.isActive).length;
+  }
+
+  getMedicationsTitle(prescription: Prescription): string {
+    return prescription.medications.map(m => m.name).join(', ');
+  }
+
   clearFilters(): void {
     this.searchTerm = '';
     this.statusFilter = 'all';

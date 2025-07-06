@@ -72,7 +72,7 @@
         <div class="flex items-center space-x-6 text-sm text-gray-600">
           <span><strong>Total:</strong> {{ prescriptions.length }}</span>
           <span><strong>Affichées:</strong> {{ filteredPrescriptions.length }}</span>
-          <span><strong>Actives:</strong> {{ prescriptions.filter(p => p.isActive).length }}</span>
+          <span><strong>Actives:</strong> {{ getActivePrescriptionsCount() }}</span>
         </div>
         <button (click)="clearFilters()" 
                 class="text-sm text-clinic-primary hover:text-clinic-secondary">
@@ -154,7 +154,7 @@
               
               <td class="px-6 py-4">
                 <div class="text-sm text-gray-900 max-w-xs truncate" 
-                     [title]="prescription.medications.map(m => m.name).join(', ')">
+                     [title]="getMedicationsTitle(prescription)">
                   {{ getMedicationSummary(prescription.medications) }}
                 </div>
               </td>
